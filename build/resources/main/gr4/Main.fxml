@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="428.0" prefWidth="754.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gr4.controllers.Controller">
+   <children>
+      <VBox prefHeight="495.0" prefWidth="129.0" style="-fx-background-color: black;">
+         <children>
+            <Pane prefHeight="122.0" prefWidth="126.0" style="-fx-background-color: white;" />
+            <Button fx:id="btnRead" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="27.0" prefWidth="130.0" text="Wczytaj dane" />
+            <Button fx:id="btnChart" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="26.0" prefWidth="130.0" text="Rysuj Wykres" />
+            <Button fx:id="btnWektor" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="22.0" prefWidth="131.0" text="Klasyfikacja wektora" />
+         </children>
+      </VBox>
+
+   </children>
+</AnchorPane>
