@@ -54,7 +54,7 @@ public class Controller extends Component implements Initializable {
                     }
                     System.out.print("\n");
                 }
-                dane.podzialNaZbiory();
+                //dane.podzialNaZbiory(15);
             }
         } else if (event.getSource()==btnChart) {
             final NumberAxis yAxis = new NumberAxis(0, 15, 1);
@@ -122,10 +122,11 @@ public class Controller extends Component implements Initializable {
                 }
                 String[] cancer = {"4","1","2","4","2","1","2","1","1"};
                 String[] klasy = {"3","6"};
-                dane.podzialNaZbiory();
-                System.out.println(dane.klasyfikujWektor(klasy, 2 ,3));
+
+                dane.podzialNaZbiory(150);
+                //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3));
+                System.out.println("h(x) = "+dane.wyznaczDokladnosc(2,3));
             }
         }
         }
     }
-

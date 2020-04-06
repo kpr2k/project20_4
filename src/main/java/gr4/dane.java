@@ -150,7 +150,8 @@ public class dane {
         return klasa;
     }
 
-    public void podzialNaZbiory() {
+
+    public void podzialNaZbiory(int rozmiar_uczacy) {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
 
@@ -161,7 +162,8 @@ public class dane {
 
         Collections.shuffle(lista);
 
-        int ind1 = (lista.size() * 8) / 10;
+        int ind1 = rozmiar_uczacy;
+        //int ind1 = (lista.size() * rozmiar_uczacy) / 100;
         String[][] zbior_uczacy = new String[ind1][dane1.length];
         String[][] zbior_testowy = new String[dane1.length - ind1][dane1.length];
 
@@ -200,8 +202,21 @@ public class dane {
             }
             System.out.println();
         }
-
     }
 
+    public double wyznaczDokladnosc(double p, int k){
+
+        double h_x;
+        int zbior_eq = 0;
+        for(int i = 0; i<zbior_testowy.length; i++){
+            //System.out.println((zbior_testowy[i][zbior_testowy[i].length-1]+" = "+klasyfikujWektor(zbior_testowy[i], p, k)));
+            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], p, k))){
+                zbior_eq++;
+            }
+        }
+        h_x = ((double)zbior_eq/zbior_testowy.length);
+
+        return h_x;
+    }
 
 }
