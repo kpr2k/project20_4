@@ -73,7 +73,7 @@ public class Controller extends Component implements Initializable {
             seriesB.setName("Klasa B");
             seriesC.setName("Klasa C");
 
-            CSVReader dataReader = new CSVReader(new FileReader("A:\\Semestr 5\\Semestr 6\\przyklad1.csv";
+            CSVReader dataReader = new CSVReader(new FileReader("A:\\Semestr 5\\Semestr 6\\przyklad1.csv");
                 String[] nextLine;
                 while ((nextLine = dataReader.readNext()) != null) {
                     int axisX = Integer.parseInt(nextLine[0]);
