@@ -73,7 +73,7 @@ public class Controller extends Component implements Initializable {
             seriesB.setName("Klasa B");
             seriesC.setName("Klasa C");
 
-            CSVReader dataReader = new CSVReader(new FileReader("A:\\Semestr 5\\Semestr 6\\przyklad1.csv";
+            try (CSVReader dataReader = new CSVReader(new FileReader("D:\\Semestr 5\\Semestr 6\\przyklad1.csv"))) {
                 String[] nextLine;
                 while ((nextLine = dataReader.readNext()) != null) {
                     int axisX = Integer.parseInt(nextLine[0]);
@@ -122,6 +122,7 @@ public class Controller extends Component implements Initializable {
                 }
                 String[] cancer = {"4","1","2","4","2","1","2","1","1"};
                 String[] klasy = {"3","6"};
+
                 dane.podzialNaZbiory(150);
                 //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3));
                 System.out.println("h(x) = "+dane.wyznaczDokladnosc(2,3));
