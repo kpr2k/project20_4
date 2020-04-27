@@ -1,0 +1,41 @@
+
+.button {
+-fx-background-color: #185ABD;
+-fx-text-align: center;
+-fx-text-fill: white;
+-fx-font-size: 14px;
+}
+
+.button:hover {
+ -fx-background-color: #0066FF;
+}
+
+#vbox {
+-fx-background-color: #185ABD;
+}
+
+#logoPane {
+-fx-background-color: #185ABD;
+}
+
+#labelLogo{
+-fx-background-color: #185ABD;
+-fx-text-align: center;
+-fx-text-fill: white;
+-fx-font-size: 20px;
+}
+
+#buttonBar {
+ -fx-background-color: #0066FF;
+}
+
+#paneSecond {
+-fx-background-color: #185ABD;
+}
+
+#ok {
+-fx-background-color: white;
+-fx-text-fill: black;
+}
+
+

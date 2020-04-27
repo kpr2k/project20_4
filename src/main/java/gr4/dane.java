@@ -19,6 +19,8 @@ public class dane {
     public String[][] zbior_uczacy;
     public String[][] zbior_testowy;
     public String[][] tabL;
+    public static int typ_pliku = 0;
+    public static int ilosc;
 
     public void odczytajPlik(String nazwaPliku) {
         // Tworzymy obiekt typu Path
@@ -51,7 +53,16 @@ public class dane {
             daneOdczytane[nrLinii] = liniaDaneString;
             nrLinii++;
         }
-
+        if(daneOdczytane[0].length == 3) {
+            typ_pliku = 1;
+            ilosc = 3;
+        }else if(daneOdczytane[0].length == 10) {
+            typ_pliku = 2;
+            ilosc = 10;
+        }else{
+            typ_pliku = 3;
+            ilosc = 25;
+        }
     }
 
     public String klasyfikujWektor(String[] w, double p, int k) {
@@ -150,7 +161,6 @@ public class dane {
         return klasa;
     }
 
-
     public void podzialNaZbiory(int rozmiar_uczacy) {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
@@ -161,7 +171,6 @@ public class dane {
         List<Integer> lista = Arrays.asList(dane2);
 
         Collections.shuffle(lista);
-
         int ind1 = rozmiar_uczacy;
         //int ind1 = (lista.size() * rozmiar_uczacy) / 100;
         String[][] zbior_uczacy = new String[ind1][dane1.length];
@@ -215,8 +224,32 @@ public class dane {
             }
         }
         h_x = ((double)zbior_eq/zbior_testowy.length);
-
         return h_x;
     }
 
+    public static void dodajPunkt(String[] t){
+        if(typ_pliku != 0){
+            if(t.length == ilosc) {
+            String[] wsp = new String[ilosc];
+            for(int i = 0; i < ilosc; i++) {
+                wsp[i] = t[i];
+            }
+            //wsp[ilosc-1] = klasyfikujWektor(t,1,1);
+            String[][] daneOdczytane_nowe = new String[daneOdczytane.length+1][daneOdczytane[0].length];
+            for (int i = 0; i < daneOdczytane.length; i++) {
+                for (int j = 0; j < daneOdczytane[0].length; j++) {
+                    daneOdczytane_nowe[i][j] = daneOdczytane[i][j];
+                }
+            }
+            for (int j = 0; j < daneOdczytane[0].length; j++) {
+                daneOdczytane_nowe[daneOdczytane_nowe.length-1][j] = wsp[j];
+            }
+            daneOdczytane = daneOdczytane_nowe;
+            }else{
+                System.out.println("Podano za mało danych.");
+            }
+        }else{
+            System.out.println("Nie wczytano pliku z danymi");
+        }
+    }
 }
