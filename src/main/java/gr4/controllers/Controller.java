@@ -115,9 +115,11 @@ public class Controller extends Component implements Initializable {
                 String[] cancer = {"4","1","2","4","2","1","2","1","1"};
                 String[] klasy = {"3","6"};
 
-                dane.podzialNaZbiory(150);
-                //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3));
-                System.out.println("h(x) = "+dane.wyznaczDokladnosc(2,3));
+
+
+                //dane.podzialNaZbiory();
+                //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
+                System.out.println(dane.klasyfikujWalidacja(cancer, 2 ,3, 10));
             }
         }
     }
@@ -156,6 +158,7 @@ public class Controller extends Component implements Initializable {
             if(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]!=null &&!(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("Y"))
                     && !(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("default payment next month"))) {
                 h.add(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]);
+
             }
         }
         Iterator<String> c = h.iterator();

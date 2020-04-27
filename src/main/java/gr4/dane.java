@@ -65,7 +65,7 @@ public class dane {
         }
     }
 
-    public String klasyfikujWektor(String[] w, double p, int k) {
+    public String klasyfikujWektor(String[] w, double p, int k, String[][] zbiorUczacy) {
         tabL = new String[k][2]; // tablica najbliższych sąsiadów
         String klasa = "";
         double L = 0;
@@ -74,14 +74,14 @@ public class dane {
         double max = 0;
         double iloraz = 1 / p;
         boolean flag = false;
-        for (int i = 0; i < zbior_uczacy.length; i++) { // zewnętrzena pętla po zbiorze uczących
+        for (int i = 0; i < zbiorUczacy.length; i++) { // zewnętrzena pętla po zbiorze uczących
             tmp = 0;
-            for (int j = 0; j < zbior_uczacy[i].length; j++) { // wewnętrzna pętla po zbiore uczących
-                if (NumberUtils.isParsable(zbior_uczacy[i][j])) {
-                    tmp += pow(abs((Integer.parseInt(zbior_uczacy[i][j])) - Integer.parseInt(w[j])), p);
+            for (int j = 0; j < zbiorUczacy[i].length; j++) { // wewnętrzna pętla po zbiore uczących
+                if (NumberUtils.isParsable(zbiorUczacy[i][j])) {
+                    tmp += pow(abs((Integer.parseInt(zbiorUczacy[i][j])) - Integer.parseInt(w[j])), p);
                 }
-                if (zbior_uczacy[i][j] instanceof String) {
-                    klasa = zbior_uczacy[i][j];
+                if (zbiorUczacy[i][j] instanceof String) {
+                    klasa = zbiorUczacy[i][j];
                 }
             }
             tmp = pow(tmp, iloraz);
@@ -158,10 +158,85 @@ public class dane {
                 System.out.println(tabKlasy[i] + " - " + results[i] + " (powtórzenia)");
             }
         }
+        System.out.println("\nWynik: "+klasa+"\n");
         return klasa;
     }
 
+
+    public String klasyfikujWalidacja(String[] w, double p, int kSasiadow, int kWalidacja ) {
+
+        int from = 0;
+        int to  = daneOdczytane.length/kWalidacja;
+        String[] wyniki = new String[kWalidacja];
+        String klasa = "";
+        for(int k = 0; k < kWalidacja; k++) {
+            System.out.println("-----------------------Walidacja k = "+k+"-----------------------");
+            String[][] uczacy = new String[((kWalidacja-1)*daneOdczytane.length)/kWalidacja][daneOdczytane[0].length];
+            int j = 0;
+            for (int i = 0; i < daneOdczytane.length; i++ ) {
+                    if(!(i>=from && i<=to)) {
+                        uczacy[j]=daneOdczytane[i];
+                        j++;
+                }
+            }
+            from = to + 1;
+            to = from + (daneOdczytane.length/kWalidacja);
+            if(to>=daneOdczytane.length) {
+                to=daneOdczytane.length-1;
+                from=to-daneOdczytane.length/kWalidacja;
+            }
+            wyniki[k] = klasyfikujWektor(w, p, kSasiadow, uczacy);
+        }
+        int[] results = new int[kWalidacja]; // ilości powtórzeń
+        Arrays.sort(wyniki);
+        int licznik = 1;
+        int max = 0;
+        int wierszMaxa = 0;
+        for (int i = 1; i < wyniki.length; i++) { // zliczanie powtórzeń
+            if (wyniki[i].equals(wyniki[i - 1]) == true) {
+                licznik++;
+            } else {
+                results[i - 1] = licznik;
+                licznik = 1;
+                if (results[i - 1] > max) {
+                    max = results[i - 1];
+                    wierszMaxa = i - 1;
+                }
+            }
+        }
+        results[wyniki.length - 1] = licznik;
+        if (results[wyniki.length - 1] > max) {
+            max = results[wyniki.length - 1];
+            wierszMaxa = wyniki.length - 1;
+        }
+        klasa = wyniki[wierszMaxa]; // wynik końcowy
+
+        System.out.println("\n\nPosortowana tablica z najbliższymi sąsiadami:");
+        for (int i = 0; i < wyniki.length; i++) {
+            System.out.print(wyniki[i] + ", ");
+        }
+        System.out.println("\n\nTablica z ilością powtórzeń");
+        for (int i = 0; i < results.length; i++) {
+            System.out.print(results[i] + ", ");
+        }
+        System.out.println();
+        System.out.println();
+        for (int i = 0; i < wyniki.length; i++) { //Wyświetlanie
+            if (results[i] > 0) {
+                System.out.println(wyniki[i] + " - " + results[i] + " (powtórzenia)");
+            }
+        }
+        return klasa;
+
+
+
+
+    }
+
+
+
     public void podzialNaZbiory(int rozmiar_uczacy) {
+
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
 
@@ -213,13 +288,13 @@ public class dane {
         }
     }
 
-    public double wyznaczDokladnosc(double p, int k){
+    public double wyznaczDokladnosc(double p, int k, String [][] zbiorUczacy){
 
         double h_x;
         int zbior_eq = 0;
         for(int i = 0; i<zbior_testowy.length; i++){
             //System.out.println((zbior_testowy[i][zbior_testowy[i].length-1]+" = "+klasyfikujWektor(zbior_testowy[i], p, k)));
-            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], p, k))){
+            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], p, k, zbiorUczacy))){
                 zbior_eq++;
             }
         }
