@@ -150,6 +150,7 @@ public class dane {
         return klasa;
     }
 
+
     public void podzialNaZbiory(int rozmiar_uczacy) {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
@@ -160,6 +161,7 @@ public class dane {
         List<Integer> lista = Arrays.asList(dane2);
 
         Collections.shuffle(lista);
+
         int ind1 = rozmiar_uczacy;
         //int ind1 = (lista.size() * rozmiar_uczacy) / 100;
         String[][] zbior_uczacy = new String[ind1][dane1.length];
@@ -213,6 +215,7 @@ public class dane {
             }
         }
         h_x = ((double)zbior_eq/zbior_testowy.length);
+
         return h_x;
     }
 

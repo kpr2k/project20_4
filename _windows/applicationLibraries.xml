@@ -1,0 +1,29 @@
+<application>
+  <component name="libraryTable">
+    <library name="commons-lang3-3.9">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/lib/commons-lang3-3.9.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="fontawesomefx-8.1">
+      <CLASSES>
+        <root url="jar://$USER_HOME$/lib/fontawesomefx-8.1.jar!/" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+    </library>
+    <library name="lib">
+      <CLASSES>
+        <root url="file://C:/Program Files/Java/javafx-sdk-14/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES>
+        <root url="file://C:/Program Files/Java/javafx-sdk-14/lib" />
+      </SOURCES>
+      <jarDirectory url="file://C:/Program Files/Java/javafx-sdk-14/lib" recursive="false" />
+      <jarDirectory url="file://C:/Program Files/Java/javafx-sdk-14/lib" recursive="false" type="SOURCES" />
+    </library>
+  </component>
+</application>

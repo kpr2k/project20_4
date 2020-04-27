@@ -74,12 +74,14 @@ public class Controller extends Component implements Initializable {
                         odczyt.add("Kolumna"+(i+1));
                     }
                 }
+
                 f = new JFrame();
                 f.setTitle("Szo to za staroc");
                 String[][] data = dane.daneOdczytane;
                 String[] columnNames = new String[odczyt.size()];
                 for(int i=0;i<odczyt.size();i++) {
                     columnNames[i]=odczyt.get(i);
+
                 }
                 k = new JTable(data, columnNames);
                 k.getAutoResizeMode();
@@ -87,40 +89,11 @@ public class Controller extends Component implements Initializable {
                 f.add(sp);
                 f.setVisible(true);
             }
+
         } else if (event.getSource()==btnChart) {
              drawChart(1,2);
 
         }else if (event.getSource()==btnWektor) {
-            /**
-             * Użytkownik musi mieć pole do wpisania:
-             * - liczby p
-             * - liczby k
-             */
-            String sciezkaDoPlik;
-            JFileChooser otworz= new JFileChooser();
-            int wynik = otworz.showOpenDialog(this);
-            if(wynik== JFileChooser.APPROVE_OPTION)
-            {
-                dane dane = new dane();
-                sciezkaDoPlik= otworz.getSelectedFile().getPath();
-                dane.odczytajPlik(sciezkaDoPlik);
-                for(int i = 0; i<dane.daneOdczytane.length; i++)
-                {
-                    for(int j = 0; j<dane.daneOdczytane[i].length; j++){
-                        System.out.print(dane.daneOdczytane[i][j]+" ");
-                    }
-                    System.out.print("\n");
-
-                }
-                String[] cancer = {"4","1","2","4","2","1","2","1","1"};
-                String[] klasy = {"3","6"};
-
-                dane.podzialNaZbiory(150);
-                //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3));
-                System.out.println("h(x) = "+dane.wyznaczDokladnosc(2,3));
-            }
-        }
-    }
 
     public void onAction(javafx.event.ActionEvent event) throws  IOException{
         FXMLLoader loader = new FXMLLoader(new File("src/main/resources/gr4/second.fxml").toURI().toURL());
@@ -198,7 +171,3 @@ public class Controller extends Component implements Initializable {
 
 
 }
-
-
-
-
