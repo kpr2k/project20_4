@@ -19,6 +19,7 @@
             <Button fx:id="btnChart" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="26.0" prefWidth="174.0" text="Rysuj Wykres" />
             <Button fx:id="btnWektor" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="26.0" prefWidth="166.0" text="Klasyfikacja wektora" />
             <Button fx:id="testowy" mnemonicParsing="false" onAction="#onAction" prefHeight="26.0" prefWidth="162.0" text="Button" />
+            <Button fx:id="btnDane" mnemonicParsing="false" onAction="#addPoint" prefHeight="24.0" prefWidth="147.0" text="Dodaj Dane" />
          </children>
       </VBox>
       <ButtonBar fx:id="buttonBar" layoutX="146.0" layoutY="82.0" prefHeight="40.0" prefWidth="608.0" />
