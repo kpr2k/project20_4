@@ -80,7 +80,6 @@ public class Controller extends Component implements Initializable {
                 String[] columnNames = new String[odczyt.size()];
                 for(int i=0;i<odczyt.size();i++) {
                     columnNames[i]=odczyt.get(i);
-
                 }
                 k = new JTable(data, columnNames);
                 k.getAutoResizeMode();
@@ -88,7 +87,6 @@ public class Controller extends Component implements Initializable {
                 f.add(sp);
                 f.setVisible(true);
             }
-
         } else if (event.getSource()==btnChart) {
              drawChart(1,2);
 
@@ -122,6 +120,28 @@ public class Controller extends Component implements Initializable {
                 System.out.println("h(x) = "+dane.wyznaczDokladnosc(2,3));
             }
         }
+    }
+
+    public void onAction(javafx.event.ActionEvent event) throws  IOException{
+        FXMLLoader loader = new FXMLLoader(new File("src/main/resources/gr4/second.fxml").toURI().toURL());
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/Main.css").toExternalForm());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    public void addPoint(javafx.event.ActionEvent event) throws  IOException{
+        FXMLLoader loader = new FXMLLoader(new File("src/main/resources/gr4/Punkt.fxml").toURI().toURL());
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/Main.css").toExternalForm());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+
     }
 
     public static void drawChart(int kolumnaX, int kolumnaY) {
@@ -188,4 +208,9 @@ public class Controller extends Component implements Initializable {
 
     }
 
+
 }
+
+
+
+
