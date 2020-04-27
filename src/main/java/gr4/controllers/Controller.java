@@ -52,6 +52,9 @@ public class Controller extends Component implements Initializable {
     JFrame f;
     JTable k;
 
+    JFrame f;
+    JTable k;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -81,7 +84,6 @@ public class Controller extends Component implements Initializable {
                 String[] columnNames = new String[odczyt.size()];
                 for(int i=0;i<odczyt.size();i++) {
                     columnNames[i]=odczyt.get(i);
-
                 }
                 k = new JTable(data, columnNames);
                 k.getAutoResizeMode();
@@ -89,7 +91,6 @@ public class Controller extends Component implements Initializable {
                 f.add(sp);
                 f.setVisible(true);
             }
-
         } else if (event.getSource()==btnChart) {
              drawChart(1,2);
 
@@ -169,5 +170,90 @@ public class Controller extends Component implements Initializable {
 
     }
 
+    public void onAction(javafx.event.ActionEvent event) throws  IOException{
+        FXMLLoader loader = new FXMLLoader(new File("src/main/resources/gr4/second.fxml").toURI().toURL());
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/Main.css").toExternalForm());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
 
+    }
+
+    public void addPoint(javafx.event.ActionEvent event) throws  IOException{
+        FXMLLoader loader = new FXMLLoader(new File("src/main/resources/gr4/Punkt.fxml").toURI().toURL());
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/Main.css").toExternalForm());
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    public static void drawChart(int kolumnaX, int kolumnaY) {
+        ArrayList<XYChart.Series> seriesArrayList = new ArrayList<>();
+        final NumberAxis yAxis = new NumberAxis();
+        final NumberAxis xAxis = new NumberAxis();
+        final ScatterChart<Number, Number> lineChart = new ScatterChart<>(xAxis, yAxis);
+        yAxis.setLabel("OSY");
+        xAxis.setLabel("OSX");
+        HashSet<String> h = new HashSet<String>();
+        for(int i = 0; i<dane.daneOdczytane.length; i++) {
+            if(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]!=null &&!(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("Y"))
+                    && !(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("default payment next month"))) {
+                h.add(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]);
+            }
+        }
+        Iterator<String> c = h.iterator();
+        System.out.println(h.toString());
+        while (c.hasNext()) {
+            XYChart.Series tmp = new XYChart.Series();
+            tmp.setName(c.next());
+            seriesArrayList.add(tmp);
+        };
+        if(seriesArrayList.get(0).getName().equals("0")&&seriesArrayList.get(1).getName().equals("1")){
+            System.out.println(dane.daneOdczytane.length);
+            Iterator<XYChart.Series> seriesIterator = seriesArrayList.iterator();
+            System.out.println(seriesArrayList.toString());
+            for(int i = 2; i<dane.daneOdczytane.length; i++)
+            {
+                for (int k=0; k<seriesArrayList.size();k++) {
+                    if ((dane.daneOdczytane[i][dane.daneOdczytane[i].length - 1]).equals(seriesArrayList.get(k).getName())) {
+                        int axisX = Integer.parseInt(dane.daneOdczytane[i][kolumnaX-1]);
+                        int axisY = Integer.parseInt(dane.daneOdczytane[i][kolumnaY-1]);
+                        seriesArrayList.get(k).getData().add(new XYChart.Data(axisX, axisY));
+                    }
+                }
+            }
+            while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
+            Scene scene = new Scene(lineChart, 800, 600);
+            Stage stage = new Stage();
+            stage.setTitle("Wykres");
+            stage.setScene(scene);
+            stage.show();
+        }else {
+            System.out.println(dane.daneOdczytane.length);
+            Iterator<XYChart.Series> seriesIterator = seriesArrayList.iterator();
+            System.out.println(seriesArrayList.toString());
+            for (int i = 0; i < dane.daneOdczytane.length; i++) {
+                for (int k = 0; k < seriesArrayList.size(); k++) {
+                    if ((dane.daneOdczytane[i][dane.daneOdczytane[i].length - 1]).equals(seriesArrayList.get(k).getName())) {
+                        int axisX = Integer.parseInt(dane.daneOdczytane[i][kolumnaX - 1]);
+                        int axisY = Integer.parseInt(dane.daneOdczytane[i][kolumnaY - 1]);
+                        seriesArrayList.get(k).getData().add(new XYChart.Data(axisX, axisY));
+                    }
+                }
+            }
+            while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
+            Scene scene = new Scene(lineChart, 500, 400);
+            Stage stage = new Stage();
+            stage.setTitle("Wykres");
+            stage.setScene(scene);
+            stage.show();
+        }
+
+
+    }
 }
