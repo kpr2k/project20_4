@@ -67,7 +67,7 @@ public class Second extends Component implements Initializable {
                 }
                 dane.podzialNaZbiory(Integer.parseInt(rozmiar.getText()));
                 //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3));
-                System.out.println("h(x) = " + dane.wyznaczDokladnosc(Integer.parseInt(parametrP.getText()), Integer.parseInt(parametrK.getText())));
+                System.out.println("h(x) = " + dane.wyznaczDokladnosc(Integer.parseInt(parametrP.getText()), Integer.parseInt(parametrK.getText()),dane.zbior_uczacy));
             }
         }
     }

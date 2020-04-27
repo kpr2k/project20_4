@@ -288,13 +288,13 @@ public class dane {
         }
     }
 
-    public double wyznaczDokladnosc(double p, int k){
+    public double wyznaczDokladnosc(double p, int k, String [][] zbiorUczacy){
 
         double h_x;
         int zbior_eq = 0;
         for(int i = 0; i<zbior_testowy.length; i++){
             //System.out.println((zbior_testowy[i][zbior_testowy[i].length-1]+" = "+klasyfikujWektor(zbior_testowy[i], p, k)));
-            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], p, k))){
+            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], p, k, zbiorUczacy))){
                 zbior_eq++;
             }
         }
