@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main extends Application {
@@ -23,6 +24,7 @@ public class Main extends Application {
             throw new RuntimeException(e);
         }
         Scene scene = new Scene (root);
+        scene.getStylesheets().add(getClass().getResource("/Main.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
     }
