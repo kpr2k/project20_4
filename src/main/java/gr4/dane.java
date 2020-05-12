@@ -16,11 +16,26 @@ import static java.lang.StrictMath.pow;
 
 public class dane {
     public static String[][] daneOdczytane;
-    public String[][] zbior_uczacy;
-    public String[][] zbior_testowy;
-    public String[][] tabL;
+    public static String[][] zbior_uczacy;
+    public static String[][] zbior_testowy;
+    public static String[][] tabL;
     public static int typ_pliku = 0;
     public static int ilosc;
+    public static double parametrP;
+    public static int parametrK;
+    public static int rozmiar_uczacy = 0;
+    public static int parametrKwalidacja;
+
+    public static void setParametry(double p, int k, int r){
+        parametrP = p;
+        parametrK = k;
+        rozmiar_uczacy = r;
+        podzialNaZbiory();
+    }
+
+    public static void setParametrKWalidacja(int kw){
+        parametrKwalidacja = kw;
+    }
 
     public void odczytajPlik(String nazwaPliku) {
         // Tworzymy obiekt typu Path
@@ -63,9 +78,12 @@ public class dane {
             typ_pliku = 3;
             ilosc = 25;
         }
+        podzialNaZbiory();
     }
 
-    public String klasyfikujWektor(String[] w, double p, int k, String[][] zbiorUczacy) {
+    public static String klasyfikujWektor(String[] w, String[][] zbiorUczacy) {
+        double p = parametrP;
+        int k = parametrK;
         tabL = new String[k][2]; // tablica najbliższych sąsiadów
         String klasa = "";
         double L = 0;
@@ -163,8 +181,8 @@ public class dane {
     }
 
 
-    public String klasyfikujWalidacja(String[] w, double p, int kSasiadow, int kWalidacja ) {
-
+    public static String klasyfikujWalidacja(String[] w) {
+        int kWalidacja = parametrKwalidacja;
         int from = 0;
         int to  = daneOdczytane.length/kWalidacja;
         String[] wyniki = new String[kWalidacja];
@@ -185,7 +203,8 @@ public class dane {
                 to=daneOdczytane.length-1;
                 from=to-daneOdczytane.length/kWalidacja;
             }
-            wyniki[k] = klasyfikujWektor(w, p, kSasiadow, uczacy);
+            wyniki[k] = klasyfikujWektor(w, uczacy);
+
         }
         int[] results = new int[kWalidacja]; // ilości powtórzeń
         Arrays.sort(wyniki);
@@ -233,10 +252,7 @@ public class dane {
 
     }
 
-
-
-    public void podzialNaZbiory(int rozmiar_uczacy) {
-
+    public static void podzialNaZbiory() {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
 
@@ -246,27 +262,32 @@ public class dane {
         List<Integer> lista = Arrays.asList(dane2);
 
         Collections.shuffle(lista);
-        int ind1 = rozmiar_uczacy;
+        int ind1;
+        if(rozmiar_uczacy == 0) {
+            ind1 = daneOdczytane.length/2;
+        }else{
+            ind1 = rozmiar_uczacy;
+        }
         //int ind1 = (lista.size() * rozmiar_uczacy) / 100;
-        String[][] zbior_uczacy = new String[ind1][dane1.length];
-        String[][] zbior_testowy = new String[dane1.length - ind1][dane1.length];
+        String[][] zbior_uczacy2 = new String[ind1][dane1.length];
+        String[][] zbior_testowy2 = new String[dane1.length - ind1][dane1.length];
 
 
         int zm;
         List<Integer> l1 = lista.subList(0, ind1);
         for (int i = 0; i < l1.size(); i++) {
             zm = l1.get(i);
-            zbior_uczacy[i] = dane1[zm];
+            zbior_uczacy2[i] = dane1[zm];
         }
 
         List<Integer> l2 = lista.subList(ind1, lista.size());
         for (int i = 0; i < l2.size(); i++) {
             zm = l2.get(i);
-            zbior_testowy[i] = dane1[zm];
+            zbior_testowy2[i] = dane1[zm];
         }
 
-        this.zbior_uczacy = zbior_uczacy;
-        this.zbior_testowy = zbior_testowy;
+        zbior_uczacy = zbior_uczacy2;
+        zbior_testowy = zbior_testowy2;
 
         // Wypisanie zbiorów
         System.out.println();
@@ -288,13 +309,13 @@ public class dane {
         }
     }
 
-    public double wyznaczDokladnosc(double p, int k, String [][] zbiorUczacy){
+    public static double wyznaczDokladnosc(String [][] zbiorUczacy){
 
         double h_x;
         int zbior_eq = 0;
         for(int i = 0; i<zbior_testowy.length; i++){
             //System.out.println((zbior_testowy[i][zbior_testowy[i].length-1]+" = "+klasyfikujWektor(zbior_testowy[i], p, k)));
-            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], p, k, zbiorUczacy))){
+            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], zbiorUczacy))){
                 zbior_eq++;
             }
         }
