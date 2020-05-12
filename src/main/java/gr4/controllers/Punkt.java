@@ -8,6 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+import javafx.stage.Stage;
+
+
 import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
@@ -48,8 +51,3 @@ public class Punkt extends Component implements Initializable {
         }
     }
 }
-
-
-
-
-

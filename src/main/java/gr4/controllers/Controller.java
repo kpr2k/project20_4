@@ -22,7 +22,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
@@ -72,6 +71,42 @@ public class Controller extends Component implements Initializable {
     @FXML
     private Button ok;
 
+    @FXML
+    private ScatterChart<Number,Number> obszarWykresu;
+
+    @FXML
+    private Pane chart;
+
+    @FXML
+    private TextField kolumnaX;
+
+    @FXML
+    private TextField kolumnaY;
+
+    @FXML
+    private TextField parametrP;
+
+    @FXML
+    private TextField parametrK;
+
+    @FXML
+    private TextField rozmiar;
+
+    @FXML
+    private TextField parametrKwalidacja;
+
+    @FXML
+    private TextField wektor;
+
+    @FXML
+    private TextArea output;
+
+    @FXML
+    private Button ok;
+
+
+    JFrame f;
+    JTable k;
 
     JFrame f;
     JTable k;
@@ -116,7 +151,6 @@ public class Controller extends Component implements Initializable {
             }
         } else if (event.getSource()==btnChart) {
             rysujWykres();
-
         }else if (event.getSource()==btnWektor) {
             /**
              * Użytkownik musi mieć pole do wpisania:
@@ -188,7 +222,8 @@ public class Controller extends Component implements Initializable {
 
             //System.out.println(dane.klasyfikujWektor(wektor, dane.zbior_uczacy));
             output.appendText("Wynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
-            output.appendText("Dokladnosc: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+"\n");
+            output.appendText("Dokladnosc kNN: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+"\n");
+            //output.appendText(dane.wyznaczDokladnosc(dane.zbior_uczacy)+"\n");
         }else{
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd");
@@ -199,11 +234,17 @@ public class Controller extends Component implements Initializable {
     }
 
     public void klasyfikacjaKWalidacja(){
-        if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !rozmiar.getText().isEmpty() && !wektor.getText().isEmpty() && !parametrKwalidacja.getText().isEmpty()) {
+
+        if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !parametrKwalidacja.getText().isEmpty()) {
             //dane dane = new dane();
-            dane.setParametry(Double.parseDouble(parametrP.getText()),
-                    Integer.parseInt(parametrK.getText()),
-                    Integer.parseInt(rozmiar.getText()));
+            if(!rozmiar.getText().isEmpty()){
+                dane.setParametry(Double.parseDouble(parametrP.getText()),
+                        Integer.parseInt(parametrK.getText()),
+                        Integer.parseInt(rozmiar.getText()));
+            }else{
+                dane.setParametry(Double.parseDouble(parametrP.getText()),
+                        Integer.parseInt(parametrK.getText()));
+            }
             dane.setParametrKWalidacja(Integer.parseInt(parametrKwalidacja.getText()));
             //sciezkaDoPlik= otworz.getSelectedFile().getPath();
             //dane.odczytajPlik(sciezkaDoPlik);
@@ -211,6 +252,7 @@ public class Controller extends Component implements Initializable {
                 for (int j = 0; j < dane.daneOdczytane[i].length; j++) {
                     System.out.print(dane.daneOdczytane[i][j] + " ");
                 }
+
                 System.out.print("\n");
 
             }
@@ -223,8 +265,10 @@ public class Controller extends Component implements Initializable {
             //dane.podzialNaZbiory();
             //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
 
-            System.out.println(dane.klasyfikujWalidacja(wektor));
-            output.appendText("Wynik klasyfikacji metoda k-krotnej walidacji:" + dane.klasyfikujWalidacja(wektor) + "\n");
+            String wynik = String.format("%.2f", dane.klasyfikujWalidacja(wektor));
+            System.out.println(wynik);
+            output.appendText("Dokladnosc (srednia) klasyfikacji metoda k-krotnej walidacji:" + wynik + "\n");
+            //output.appendText(wynik + "\n");
         }else{
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd");
@@ -233,7 +277,6 @@ public class Controller extends Component implements Initializable {
             alert.showAndWait();
         }
     }
-
     public void drawChart(int kolumnaX, int kolumnaY) {
         ArrayList<XYChart.Series> seriesArrayList = new ArrayList<>();
         seriesArrayList.clear();
@@ -249,6 +292,7 @@ public class Controller extends Component implements Initializable {
                 h.add(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]);
 
             }
+
         }
         Iterator<String> c = h.iterator();
         System.out.println(h.toString());
@@ -265,8 +309,8 @@ public class Controller extends Component implements Initializable {
             {
                 for (int k=0; k<seriesArrayList.size();k++) {
                     if ((dane.daneOdczytane[i][dane.daneOdczytane[i].length - 1]).equals(seriesArrayList.get(k).getName())) {
-                        int axisX = Integer.parseInt(dane.daneOdczytane[i][kolumnaX-1]);
-                        int axisY = Integer.parseInt(dane.daneOdczytane[i][kolumnaY-1]);
+                        double axisX = Double.parseDouble(dane.daneOdczytane[i][kolumnaX-1]);
+                        double axisY = Double.parseDouble(dane.daneOdczytane[i][kolumnaY-1]);
                         seriesArrayList.get(k).getData().add(new XYChart.Data(axisX, axisY));
                     }
                 }
@@ -299,14 +343,6 @@ public class Controller extends Component implements Initializable {
             stage.setTitle("Wykres");
             stage.setScene(scene);
             stage.show();*/
-
         }
-
     }
-
-
 }
-
-
-
-
