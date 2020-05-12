@@ -78,8 +78,3 @@ public class Second extends Component implements Initializable {
         }
     }
 }
-
-
-
-
-

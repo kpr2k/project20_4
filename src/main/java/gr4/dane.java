@@ -192,9 +192,9 @@ public class dane {
     }
 
 
+
     public static double klasyfikujWalidacja(String[] w) {
         int kWalidacja = parametrKwalidacja;
-
         int from = 0;
         int to  = daneOdczytane.length/kWalidacja;
         double[] wyniki = new double[kWalidacja];
@@ -281,6 +281,7 @@ public class dane {
         return sredniaWynikow;
     }
 
+
     public static void podzialNaZbiory() {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
@@ -291,6 +292,7 @@ public class dane {
         List<Integer> lista = Arrays.asList(dane2);
 
         Collections.shuffle(lista);
+
         int ind1;
         if(rozmiar_uczacy == 0) {
             ind1 = daneOdczytane.length/2;
@@ -300,8 +302,6 @@ public class dane {
         //int ind1 = (lista.size() * rozmiar_uczacy) / 100;
         String[][] zbior_uczacy2 = new String[ind1][dane1.length];
         String[][] zbior_testowy2 = new String[dane1.length - ind1][dane1.length];
-
-
         int zm;
         List<Integer> l1 = lista.subList(0, ind1);
         for (int i = 0; i < l1.size(); i++) {
@@ -337,6 +337,7 @@ public class dane {
             System.out.println();
         }
     }
+
 
     public static double wyznaczDokladnosc(String [][] zbiorUczacy){
 
