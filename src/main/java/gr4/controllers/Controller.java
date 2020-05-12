@@ -9,29 +9,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-
 import javafx.scene.SubScene;
 import javafx.scene.chart.LineChart;
-
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-
 import javafx.scene.control.TextArea;
-
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
 import javax.swing.*;
 import java.awt.*;
-
 import java.io.*;
-
 import java.net.URL;
 import java.util.*;
 
@@ -44,13 +37,36 @@ public class Controller extends Component implements Initializable {
 
     @FXML
     private Button btnWektor;
+
+    @FXML
+    private ScatterChart<Number,Number> obszarWykresu;
+
     @FXML
     private Pane chart;
+
     @FXML
     private TextField kolumnaX;
 
     @FXML
     private TextField kolumnaY;
+
+    @FXML
+    private TextField parametrP;
+
+    @FXML
+    private TextField parametrK;
+
+    @FXML
+    private TextField rozmiar;
+
+    @FXML
+    private TextField parametrKwalidacja;
+
+    @FXML
+    private TextField wektor;
+
+    @FXML
+    private TextArea output;
 
     @FXML
     private Button ok;
@@ -134,10 +150,7 @@ public class Controller extends Component implements Initializable {
                 f.setVisible(true);
             }
         } else if (event.getSource()==btnChart) {
-
             rysujWykres();
-
-
         }else if (event.getSource()==btnWektor) {
             /**
              * Użytkownik musi mieć pole do wpisania:
@@ -221,6 +234,7 @@ public class Controller extends Component implements Initializable {
     }
 
     public void klasyfikacjaKWalidacja(){
+
         if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !parametrKwalidacja.getText().isEmpty()) {
             //dane dane = new dane();
             if(!rozmiar.getText().isEmpty()){
@@ -250,6 +264,7 @@ public class Controller extends Component implements Initializable {
             //String[] klasy = {"3","6"};
             //dane.podzialNaZbiory();
             //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
+
             String wynik = String.format("%.2f", dane.klasyfikujWalidacja(wektor));
             System.out.println(wynik);
             output.appendText("Dokladnosc (srednia) klasyfikacji metoda k-krotnej walidacji:" + wynik + "\n");
@@ -262,12 +277,9 @@ public class Controller extends Component implements Initializable {
             alert.showAndWait();
         }
     }
-
-
     public void drawChart(int kolumnaX, int kolumnaY) {
         ArrayList<XYChart.Series> seriesArrayList = new ArrayList<>();
         seriesArrayList.clear();
-
         final NumberAxis yAxis = new NumberAxis();
         final NumberAxis xAxis = new NumberAxis();
         final ScatterChart<Number, Number> lineChart = new ScatterChart<>(xAxis, yAxis);
@@ -331,7 +343,6 @@ public class Controller extends Component implements Initializable {
             stage.setTitle("Wykres");
             stage.setScene(scene);
             stage.show();*/
-
         }
     }
 }

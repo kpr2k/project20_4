@@ -33,14 +33,13 @@ public class dane {
         rozmiar_uczacy = r;
         podzialNaZbiory();
     }
-
     public static void setParametry(double p, int k){
         parametrP = p;
         parametrK = k;
         rozmiar_uczacy = 0;
         podzialNaZbiory();
     }
-
+  
     public static void setParametrKWalidacja(int kw){
         parametrKwalidacja = kw;
     }
@@ -191,8 +190,6 @@ public class dane {
         return klasa;
     }
 
-
-
     public static double klasyfikujWalidacja(String[] w) {
         int kWalidacja = parametrKwalidacja;
         int from = 0;
@@ -280,8 +277,7 @@ public class dane {
 
         return sredniaWynikow;
     }
-
-
+  
     public static void podzialNaZbiory() {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
@@ -292,7 +288,6 @@ public class dane {
         List<Integer> lista = Arrays.asList(dane2);
 
         Collections.shuffle(lista);
-
         int ind1;
         if(rozmiar_uczacy == 0) {
             ind1 = daneOdczytane.length/2;
@@ -337,7 +332,6 @@ public class dane {
             System.out.println();
         }
     }
-
 
     public static double wyznaczDokladnosc(String [][] zbiorUczacy){
 
