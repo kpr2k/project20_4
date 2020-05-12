@@ -9,12 +9,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SubScene;
+import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
@@ -22,9 +25,7 @@ import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -37,13 +38,36 @@ public class Controller extends Component implements Initializable {
 
     @FXML
     private Button btnWektor;
+
+    @FXML
+    private ScatterChart<Number,Number> obszarWykresu;
+
     @FXML
     private Pane chart;
+
     @FXML
     private TextField kolumnaX;
 
     @FXML
     private TextField kolumnaY;
+
+    @FXML
+    private TextField parametrP;
+
+    @FXML
+    private TextField parametrK;
+
+    @FXML
+    private TextField rozmiar;
+
+    @FXML
+    private TextField parametrKwalidacja;
+
+    @FXML
+    private TextField wektor;
+
+    @FXML
+    private TextArea output;
 
     @FXML
     private Button ok;
@@ -65,6 +89,9 @@ public class Controller extends Component implements Initializable {
             int wynik = otworz.showOpenDialog(this);
             if(wynik== JFileChooser.APPROVE_OPTION)
             {
+                /*dane dane = new dane(Double.parseDouble(parametrP.getText()),
+                        Integer.parseInt(parametrK.getText()),
+                        Integer.parseInt(rozmiar.getText()));*/
                 dane dane = new dane();
                 sciezkaDoPlik= otworz.getSelectedFile().getPath();
                 dane.odczytajPlik(sciezkaDoPlik);
@@ -88,7 +115,7 @@ public class Controller extends Component implements Initializable {
                 f.setVisible(true);
             }
         } else if (event.getSource()==btnChart) {
-             drawChart(1,2);
+            rysujWykres();
 
         }else if (event.getSource()==btnWektor) {
             /**
@@ -96,30 +123,12 @@ public class Controller extends Component implements Initializable {
              * - liczby p
              * - liczby k
              */
-            String sciezkaDoPlik;
-            JFileChooser otworz= new JFileChooser();
-            int wynik = otworz.showOpenDialog(this);
-            if(wynik== JFileChooser.APPROVE_OPTION)
+            //String sciezkaDoPlik;
+            //JFileChooser otworz= new JFileChooser();
+            // wynik = otworz.showOpenDialog(this);
+            if(dane.typ_pliku > 0)
             {
-                dane dane = new dane();
-                sciezkaDoPlik= otworz.getSelectedFile().getPath();
-                dane.odczytajPlik(sciezkaDoPlik);
-                for(int i = 0; i<dane.daneOdczytane.length; i++)
-                {
-                    for(int j = 0; j<dane.daneOdczytane[i].length; j++){
-                        System.out.print(dane.daneOdczytane[i][j]+" ");
-                    }
-                    System.out.print("\n");
-
-                }
-                String[] cancer = {"4","1","2","4","2","1","2","1","1"};
-                String[] klasy = {"3","6"};
-
-
-
-                //dane.podzialNaZbiory();
-                //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
-                System.out.println(dane.klasyfikujWalidacja(cancer, 2 ,3, 10));
+                klasyfikacjaKWalidacja();
             }
         }
     }
@@ -142,12 +151,92 @@ public class Controller extends Component implements Initializable {
         scene.getStylesheets().add(getClass().getResource("/Main.css").toExternalForm());
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.show();
-
+        stage.showAndWait();
+        rysujWykres();
     }
 
-    public static void drawChart(int kolumnaX, int kolumnaY) {
+    public void rysujWykres(){
+        if(dane.typ_pliku > 0){
+            //drawChart(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
+            if(!kolumnaX.getText().isEmpty() || !kolumnaY.getText().isEmpty()){
+                drawChart(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
+            }else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Błąd");
+                alert.setHeaderText("Nie wypełniono wszystkich pól");
+                alert.setContentText("Aby narysować wykres należy podać numery kolumn w zakładce Rysowanie!");
+                alert.showAndWait();
+            }
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Nie wczytano pliu");
+            alert.setContentText("Aby narysować wykres należy wczytać plik z danymi!");
+            alert.showAndWait();
+        }
+    }
+
+    public void klasyfikacjaKNN(){
+        if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !rozmiar.getText().isEmpty() && !wektor.getText().isEmpty()){
+            //dane dane = new dane();
+            dane.setParametry(Double.parseDouble(parametrP.getText()),
+                    Integer.parseInt(parametrK.getText()),
+                    Integer.parseInt(rozmiar.getText()));
+
+            String str = wektor.getText();
+            String[] wektor = str.split(",");
+
+            //System.out.println(dane.klasyfikujWektor(wektor, dane.zbior_uczacy));
+            output.appendText("Wynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
+            output.appendText("Dokladnosc: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+"\n");
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Nie wypełniono wszystkich pól");
+            alert.setContentText("Aby sklasyfikować wektor należy podać wszystkie parametry w zakładce Klasyfikacja kNN!");
+            alert.showAndWait();
+        }
+    }
+
+    public void klasyfikacjaKWalidacja(){
+        if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !rozmiar.getText().isEmpty() && !wektor.getText().isEmpty() && !parametrKwalidacja.getText().isEmpty()) {
+            //dane dane = new dane();
+            dane.setParametry(Double.parseDouble(parametrP.getText()),
+                    Integer.parseInt(parametrK.getText()),
+                    Integer.parseInt(rozmiar.getText()));
+            dane.setParametrKWalidacja(Integer.parseInt(parametrKwalidacja.getText()));
+            //sciezkaDoPlik= otworz.getSelectedFile().getPath();
+            //dane.odczytajPlik(sciezkaDoPlik);
+            for (int i = 0; i < dane.daneOdczytane.length; i++) {
+                for (int j = 0; j < dane.daneOdczytane[i].length; j++) {
+                    System.out.print(dane.daneOdczytane[i][j] + " ");
+                }
+                System.out.print("\n");
+
+            }
+            String str = wektor.getText();
+            String[] wektor = str.split(",");
+
+
+            //String[] cancer = {"4","1","2","4","2","1","2","1","1"};
+            //String[] klasy = {"3","6"};
+            //dane.podzialNaZbiory();
+            //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
+
+            System.out.println(dane.klasyfikujWalidacja(wektor));
+            output.appendText("Wynik klasyfikacji metoda k-krotnej walidacji:" + dane.klasyfikujWalidacja(wektor) + "\n");
+        }else{
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Nie wypełniono wszystkich pól");
+            alert.setContentText("Aby sklasyfikować wektor  metodą k-krotnej walidacji należy podać wszystkie parametry w zakładkach Klasyfikacja kNN oraz Klasyfikacja Metodą k-krotnej walidacji!");
+            alert.showAndWait();
+        }
+    }
+
+    public void drawChart(int kolumnaX, int kolumnaY) {
         ArrayList<XYChart.Series> seriesArrayList = new ArrayList<>();
+        seriesArrayList.clear();
         final NumberAxis yAxis = new NumberAxis();
         final NumberAxis xAxis = new NumberAxis();
         final ScatterChart<Number, Number> lineChart = new ScatterChart<>(xAxis, yAxis);
@@ -183,11 +272,13 @@ public class Controller extends Component implements Initializable {
                 }
             }
             while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
-            Scene scene = new Scene(lineChart, 800, 600);
+
+            obszarWykresu.setData(lineChart.getData());
+            /*Scene scene = new Scene(lineChart, 800, 600);
             Stage stage = new Stage();
             stage.setTitle("Wykres");
             stage.setScene(scene);
-            stage.show();
+            stage.show();*/
         }else {
             System.out.println(dane.daneOdczytane.length);
             Iterator<XYChart.Series> seriesIterator = seriesArrayList.iterator();
@@ -202,11 +293,13 @@ public class Controller extends Component implements Initializable {
                 }
             }
             while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
-            Scene scene = new Scene(lineChart, 500, 400);
+            obszarWykresu.setData(lineChart.getData());
+            /*Scene scene = new Scene(lineChart, 500, 400);
             Stage stage = new Stage();
             stage.setTitle("Wykres");
             stage.setScene(scene);
-            stage.show();
+            stage.show();*/
+
         }
 
     }
