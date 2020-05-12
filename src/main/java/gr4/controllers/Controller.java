@@ -71,7 +71,6 @@ public class Controller extends Component implements Initializable {
     @FXML
     private Button ok;
 
-
     JFrame f;
     JTable k;
 
