@@ -71,43 +71,6 @@ public class Controller extends Component implements Initializable {
     @FXML
     private Button ok;
 
-    @FXML
-    private ScatterChart<Number,Number> obszarWykresu;
-
-    @FXML
-    private Pane chart;
-
-    @FXML
-    private TextField kolumnaX;
-
-    @FXML
-    private TextField kolumnaY;
-
-    @FXML
-    private TextField parametrP;
-
-    @FXML
-    private TextField parametrK;
-
-    @FXML
-    private TextField rozmiar;
-
-    @FXML
-    private TextField parametrKwalidacja;
-
-    @FXML
-    private TextField wektor;
-
-    @FXML
-    private TextArea output;
-
-    @FXML
-    private Button ok;
-
-
-    JFrame f;
-    JTable k;
-
     JFrame f;
     JTable k;
 
