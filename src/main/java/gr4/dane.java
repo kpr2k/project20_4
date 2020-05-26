@@ -55,7 +55,7 @@ public class dane {
         wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
         wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-  
+
     public static void setParametrKWalidacja(int kw){
         parametrKwalidacja = kw;
     }
@@ -314,7 +314,7 @@ public class dane {
 
         return sredniaWynikow;
     }
-  
+
     public static void podzialNaZbiory() {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
