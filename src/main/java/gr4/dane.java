@@ -1,8 +1,12 @@
 package gr4;
 
 import gr4.controllers.Controller;
+import javafx.scene.Node;
+import javafx.scene.chart.ScatterChart;
+import javafx.scene.chart.XYChart;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,21 +30,32 @@ public class dane {
     public static int parametrK;
     public static int rozmiar_uczacy = 0;
     public static int parametrKwalidacja;
+    public static Wezel[] wezlytablica;
+    public static Wezel[] wezlytablicaUczacy;
+    public static Wezel[] wezlytablicaTest;
+    public static int[] najblizsiSasiedzi;
+    public static boolean flaga = false;
+    public static int[] porownanie;
+    public static int[] porownanie2;
+    public static boolean flaga_sasiedzi = true;
 
     public static void setParametry(double p, int k, int r){
         parametrP = p;
         parametrK = k;
         rozmiar_uczacy = r;
         podzialNaZbiory();
+        wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
+        wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-
     public static void setParametry(double p, int k){
         parametrP = p;
         parametrK = k;
         rozmiar_uczacy = 0;
         podzialNaZbiory();
+        wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
+        wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-
+  
     public static void setParametrKWalidacja(int kw){
         parametrKwalidacja = kw;
     }
@@ -87,12 +102,18 @@ public class dane {
             ilosc = 25;
         }
         podzialNaZbiory();
+        wezlytablica = new Wezel[daneOdczytane.length];
+        wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
+        wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
 
     public static String klasyfikujWektor(String[] w, String[][] zbiorUczacy) {
         double p = parametrP;
         int k = parametrK;
-        tabL = new String[k][2]; // tablica najbliższych sąsiadów
+        if(flaga){
+            k++;
+        }
+        tabL = new String[k][3]; // tablica najbliższych sąsiadów
         String klasa = "";
         double L = 0;
         double tmp;
@@ -114,6 +135,7 @@ public class dane {
             //System.out.println("i = " + i + ", " + klasa + ", L= " + tmp);
             for (int n = 0; n < tabL.length; n++) { // pętla po tablicy najbliższych sąsiadów
                 if (tabL[n][1] == null) { // wypełnienie tablicy startowymi wartościami
+                    tabL[n][2] = Integer.toString(i);
                     tabL[n][1] = Double.toString(tmp);
                     tabL[n][0] = klasa;
                     max = Double.parseDouble(tabL[0][1]);
@@ -128,6 +150,7 @@ public class dane {
                 }
             }
             if (Double.parseDouble(tabL[tmp2][1]) > tmp && flag == true) { // zamiana maxa na mniejszą wartość z tablicy uczących
+                tabL[tmp2][2] = Integer.toString(i);
                 tabL[tmp2][1] = Double.toString(tmp);
                 tabL[tmp2][0] = klasa;
                 max = Double.parseDouble(tabL[0][1]);
@@ -162,6 +185,11 @@ public class dane {
         }
         klasa = tabKlasy[wierszMaxa]; // wynik końcowy
 
+        najblizsiSasiedzi = new int[tabL.length];
+        for (int i = 0; i < tabL.length; i++) {
+            najblizsiSasiedzi[i] = Integer.parseInt(tabL[i][2]);
+        }
+
         /*System.out.print("\nTablica z najbliższymi sasiadami i ich długość:");
         for (int i = 0; i < tabL.length; i++) {
             System.out.println();
@@ -185,23 +213,30 @@ public class dane {
             }
         }
         System.out.println("\nWynik: "+klasa+"\n");
-
          */
         System.out.println(klasa);
         return klasa;
     }
 
-
-
     public static double klasyfikujWalidacja(String[] w) {
         int kWalidacja = parametrKwalidacja;
         int from = 0;
-        int to  = daneOdczytane.length/kWalidacja;
+        int to  = 0;
+        int to2 = 0;
         double[] wyniki = new double[kWalidacja];
         double dokladnosc = 0;
         double sredniaWynikow = 0;
         List<String[]> listaDanychOdczytanych = new ArrayList<>();
         String [][] wymieszaneDane = new String[daneOdczytane.length][daneOdczytane[0].length];
+
+        if(daneOdczytane.length%kWalidacja==0) {
+            to = daneOdczytane.length/kWalidacja;
+            to2 = daneOdczytane.length/kWalidacja;
+        }
+        else {
+            to = daneOdczytane.length/kWalidacja + 1;
+            to2 = daneOdczytane.length/kWalidacja + 1;
+        }
 
         // Wymieszanie danych odczytanych
         for(int i = 0; i < daneOdczytane.length; i++) {
@@ -223,8 +258,8 @@ public class dane {
 
         // Podział danych na zbiory
         for(int k = 0; k < kWalidacja; k++) {
-            System.out.println("\n-----------------------Walidacja k = "+k+"-----------------------");
-            zbior_uczacy = new String[wymieszaneDane.length-(wymieszaneDane.length/kWalidacja)][wymieszaneDane[0].length];
+            System.out.println("\n-----------------------Walidacja n = "+k+"-----------------------");
+            zbior_uczacy = new String[wymieszaneDane.length-(to-from)][wymieszaneDane[0].length];
             zbior_testowy = new String[to-from][wymieszaneDane[0].length];
 
             int indeksUczacych = 0;
@@ -260,10 +295,9 @@ public class dane {
             wyniki[k]=dokladnosc;
 
             from = to;
-            to = from + (wymieszaneDane.length/kWalidacja);
-            if(to>=wymieszaneDane.length) {
+            to = from + to2;
+            if(to>wymieszaneDane.length) {
                 to=wymieszaneDane.length;
-                from=to-wymieszaneDane.length/kWalidacja;
             }
             /*
             wyniki[k] = klasyfikujWektor(w, p, kSasiadow, uczacy);
@@ -272,7 +306,7 @@ public class dane {
         System.out.println("----------------------------------------");
         System.out.println("Wyniki dokładności:");
         for(int i = 0; i < wyniki.length; i++) {
-            System.out.println("k = "+i+", "+wyniki[i]);
+            System.out.println("n = "+i+", "+wyniki[i]);
             sredniaWynikow += wyniki[i];
         }
         sredniaWynikow = sredniaWynikow/wyniki.length;
@@ -280,8 +314,7 @@ public class dane {
 
         return sredniaWynikow;
     }
-
-
+  
     public static void podzialNaZbiory() {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
@@ -290,9 +323,13 @@ public class dane {
             dane2[i] = i;
         }
         List<Integer> lista = Arrays.asList(dane2);
-
         Collections.shuffle(lista);
-
+        porownanie = new int[daneOdczytane.length];
+        porownanie2 = new int[daneOdczytane.length];
+        for (int i = 0; i < daneOdczytane.length; i++) {
+            porownanie[i] = dane2[i];
+            porownanie2[dane2[i]] = i;
+        }
         int ind1;
         if(rozmiar_uczacy == 0) {
             ind1 = daneOdczytane.length/2;
@@ -308,13 +345,11 @@ public class dane {
             zm = l1.get(i);
             zbior_uczacy2[i] = dane1[zm];
         }
-
         List<Integer> l2 = lista.subList(ind1, lista.size());
         for (int i = 0; i < l2.size(); i++) {
             zm = l2.get(i);
             zbior_testowy2[i] = dane1[zm];
         }
-
         zbior_uczacy = zbior_uczacy2;
         zbior_testowy = zbior_testowy2;
 
@@ -338,9 +373,7 @@ public class dane {
         }
     }
 
-
     public static double wyznaczDokladnosc(String [][] zbiorUczacy){
-
         double h_x;
         int zbior_eq = 0;
         for(int i = 0; i<zbior_testowy.length; i++){
@@ -383,4 +416,9 @@ public class dane {
             System.out.println("Nie wczytano pliku z danymi");
         }
     }
+
+    public static int[] WybierzNajblizsiSasiedzi() {
+        return najblizsiSasiedzi;
+    }
+
 }
