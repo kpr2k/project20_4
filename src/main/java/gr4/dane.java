@@ -71,7 +71,6 @@ public class dane {
             return true;
         }
     }
-
     public static void setParametrKWalidacja(int kw){
         parametrKwalidacja = kw;
     }
@@ -237,12 +236,22 @@ public class dane {
     public static double klasyfikujWalidacja(String[] w) {
         int kWalidacja = parametrKwalidacja;
         int from = 0;
-        int to  = daneOdczytane.length/kWalidacja;
+        int to  = 0;
+        int to2 = 0;
         double[] wyniki = new double[kWalidacja];
         double dokladnosc = 0;
         double sredniaWynikow = 0;
         List<String[]> listaDanychOdczytanych = new ArrayList<>();
         String [][] wymieszaneDane = new String[daneOdczytane.length][daneOdczytane[0].length];
+
+        if(daneOdczytane.length%kWalidacja==0) {
+            to = daneOdczytane.length/kWalidacja;
+            to2 = daneOdczytane.length/kWalidacja;
+        }
+        else {
+            to = daneOdczytane.length/kWalidacja + 1;
+            to2 = daneOdczytane.length/kWalidacja + 1;
+        }
 
         // Wymieszanie danych odczytanych
         for(int i = 0; i < daneOdczytane.length; i++) {
@@ -264,8 +273,8 @@ public class dane {
 
         // Podział danych na zbiory
         for(int k = 0; k < kWalidacja; k++) {
-            System.out.println("\n-----------------------Walidacja k = "+k+"-----------------------");
-            zbior_uczacy = new String[wymieszaneDane.length-(wymieszaneDane.length/kWalidacja)][wymieszaneDane[0].length];
+            System.out.println("\n-----------------------Walidacja n = "+k+"-----------------------");
+            zbior_uczacy = new String[wymieszaneDane.length-(to-from)][wymieszaneDane[0].length];
             zbior_testowy = new String[to-from][wymieszaneDane[0].length];
 
             int indeksUczacych = 0;
@@ -301,10 +310,9 @@ public class dane {
             wyniki[k]=dokladnosc;
 
             from = to;
-            to = from + (wymieszaneDane.length/kWalidacja);
-            if(to>=wymieszaneDane.length) {
+            to = from + to2;
+            if(to>wymieszaneDane.length) {
                 to=wymieszaneDane.length;
-                from=to-wymieszaneDane.length/kWalidacja;
             }
             /*
             wyniki[k] = klasyfikujWektor(w, p, kSasiadow, uczacy);
@@ -313,7 +321,7 @@ public class dane {
         System.out.println("----------------------------------------");
         System.out.println("Wyniki dokładności:");
         for(int i = 0; i < wyniki.length; i++) {
-            System.out.println("k = "+i+", "+wyniki[i]);
+            System.out.println("n = "+i+", "+wyniki[i]);
             sredniaWynikow += wyniki[i];
         }
         sredniaWynikow = sredniaWynikow/wyniki.length;
@@ -321,7 +329,7 @@ public class dane {
 
         return sredniaWynikow;
     }
-  
+
     public static void podzialNaZbiory() {
         String[][] dane1 = daneOdczytane;
         Integer[] dane2 = new Integer[daneOdczytane.length];
