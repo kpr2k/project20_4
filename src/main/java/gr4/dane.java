@@ -37,7 +37,8 @@ public class dane {
     public static boolean flaga = false;
     public static int[] porownanie;
     public static int[] porownanie2;
-    public static boolean flaga_sasiedzi = true;
+    public static boolean flaga_sasiedzi = false;
+    public static boolean flaga_sasiedzi_2 = false;
 
     public static void setParametry(double p, int k, int r){
         parametrP = p;
@@ -50,12 +51,27 @@ public class dane {
     public static void setParametry(double p, int k){
         parametrP = p;
         parametrK = k;
-        rozmiar_uczacy = 0;
+        //rozmiar_uczacy = 0;
+        //podzialNaZbiory();
+        //wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
+        //wezlytablicaTest = new Wezel[zbior_testowy.length];
+    }
+
+    public static void setDaneZbiory(int r){
+        rozmiar_uczacy = r;
         podzialNaZbiory();
         wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
         wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-  
+
+    public static boolean sprawdzRozmiar(int r){
+        if(r > daneOdczytane.length-1){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     public static void setParametrKWalidacja(int kw){
         parametrKwalidacja = kw;
     }
