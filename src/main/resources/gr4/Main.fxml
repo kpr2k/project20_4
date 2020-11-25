@@ -83,7 +83,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                   <children>
-                      <ScatterChart fx:id="obszarWykresu" layoutX="2.0" layoutY="14.0" prefHeight="385.0" prefWidth="678.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                      <ScatterChart fx:id="obszarWykresu" layoutX="2.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="385.0" prefWidth="678.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <xAxis>
                               <NumberAxis fx:id="scatXAxis" side="BOTTOM" />
                           </xAxis>

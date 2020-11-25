@@ -38,4 +38,43 @@
 -fx-text-fill: black;
 }
 
+#id1 .chart-symbol { -fx-background-color: CHART_COLOR_1;
+-fx-background-radius: 5px;
+-fx-padding: 5px;
+}
+
+#id2 .chart-symbol {
+-fx-background-color: CHART_COLOR_2;
+-fx-background-radius: 5px;
+-fx-padding: 5px;
+}
+
+#id3 .chart-symbol {
+-fx-background-color: CHART_COLOR_3;
+-fx-background-radius: 5px;
+-fx-padding: 5px;
+}
+
+#id1O .chart-symbol {
+-fx-background-color: CHART_COLOR_1;
+-fx-background-radius: 5px;
+-fx-padding: 5px;
+-fx-opacity: 0.5;
+}
+
+#id2O .chart-symbol {
+-fx-background-color: CHART_COLOR_2;
+-fx-background-radius: 5px;
+-fx-padding: 5px;
+-fx-opacity: 0.5;
+}
+
+#id3O .chart-symbol {
+-fx-background-color: CHART_COLOR_3;
+-fx-background-radius: 5px;
+-fx-padding: 5px;
+-fx-opacity: 0.5;
+}
+
+
 
