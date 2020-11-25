@@ -24,6 +24,7 @@ public class dane {
     public static String[][] zbior_uczacy;
     public static String[][] zbior_testowy;
     public static String[][] tabL;
+    public static String[][][] obszary;
     public static int typ_pliku = 0;
     public static int ilosc;
     public static double parametrP;
@@ -33,12 +34,14 @@ public class dane {
     public static Wezel[] wezlytablica;
     public static Wezel[] wezlytablicaUczacy;
     public static Wezel[] wezlytablicaTest;
+    public static Wezel[] wezlytablicaObszary;
     public static int[] najblizsiSasiedzi;
     public static boolean flaga = false;
     public static int[] porownanie;
     public static int[] porownanie2;
     public static boolean flaga_sasiedzi = false;
     public static boolean flaga_sasiedzi_2 = false;
+
 
     public static void setParametry(double p, int k, int r){
         parametrP = p;

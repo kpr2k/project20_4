@@ -88,6 +88,8 @@ public class Controller extends Component implements Initializable {
 
     JFrame f;
     JTable k;
+    double max_height;
+    double max_width;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -343,9 +345,15 @@ public class Controller extends Component implements Initializable {
     public void drawChart(int kolumnaX, int kolumnaY) {
         ArrayList<XYChart.Series> seriesArrayList = new ArrayList<>();
         seriesArrayList.clear();
+        ArrayList<XYChart.Series> seriesArrayListObszary = new ArrayList<>();
+        seriesArrayListObszary.clear();
         final NumberAxis yAxis = new NumberAxis();
         final NumberAxis xAxis = new NumberAxis();
         final ScatterChart<Number, Number> lineChart = new ScatterChart<>(xAxis, yAxis);
+        final ScatterChart<Number, Number> lineChart2 = new ScatterChart<>(xAxis, yAxis);
+        lineChart.setStyle("Obszary.css");
+        dane.obszary = plaszczyznaDecyzji(true);
+        dane.wezlytablicaObszary = new Wezel[dane.obszary.length];
         yAxis.setLabel("OSY");
         xAxis.setLabel("OSX");
         HashSet<String> h = new HashSet<String>();
@@ -357,16 +365,25 @@ public class Controller extends Component implements Initializable {
             }
 
         }
+        for(int i = 0; i<dane.obszary.length; i++) {
+            for(int j = 0; j<dane.obszary[0].length; j++) {
+                h.add(dane.obszary[i][j][dane.obszary[i][j].length-1]);
+            }
+        }
         Iterator<String> c = h.iterator();
         System.out.println(h.toString());
+
         while (c.hasNext()) {
             XYChart.Series tmp = new XYChart.Series();
             tmp.setName(c.next());
             seriesArrayList.add(tmp);
+
         };
+
         if(seriesArrayList.get(0).getName().equals("0")&&seriesArrayList.get(1).getName().equals("1")){
             System.out.println(dane.daneOdczytane.length);
             Iterator<XYChart.Series> seriesIterator = seriesArrayList.iterator();
+            //Iterator<XYChart.Series> seriesIteratorObszary = seriesArrayListObszary.iterator();
             System.out.println(seriesArrayList.toString());
             for(int i = 2; i<dane.daneOdczytane.length; i++)
             {
@@ -382,7 +399,45 @@ public class Controller extends Component implements Initializable {
                     }
                 }
             }
+            for (int i = 0; i < dane.obszary.length; i++) {
+                for (int j = 0; j < dane.obszary[i].length; j++) {
+                    for (int k = 0; k < seriesArrayList.size(); k++) {
+                        if ((dane.obszary[i][j][dane.obszary[i][j].length - 1]).equals(seriesArrayList.get(k).getName())) {
+                            double axisX = Double.parseDouble(dane.obszary[i][j][kolumnaX-1]);
+                            double axisY = Double.parseDouble(dane.obszary[i][j][kolumnaY-1]);
+                            /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
+                            seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
+                            dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
+                            //dane.indeks[i] = i;
+                            seriesArrayList.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                        }
+                    }
+
+                }
+            }
+            //XYChart.Series series1 = new XYChart.Series();
+            /*for(int i = 2; i<dane.obszary.length; i++)
+            {
+                for (int k=0; k<seriesArrayList.size();k++) {
+                    double axisX = Double.parseDouble(dane.obszary[i][kolumnaX-1]);
+                    double axisY = Double.parseDouble(dane.obszary[i][kolumnaY-1]);
+                        *//*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
+                        seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*//*
+                    dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
+                    //dane.indeks[i] = i;
+                    seriesArrayListObszary.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                    series1.getData().add(new XYChart.Data(axisX, axisY));
+                }
+            }*/
+            /*for(int i = 0; i<dane.obszary.length; i++)
+            {
+                double axisX = Double.parseDouble(dane.obszary[i][kolumnaX-1]);
+                double axisY = Double.parseDouble(dane.obszary[i][kolumnaY-1]);
+                seriesArrayList.getData().add(new XYChart.Data(axisX, axisY));
+            }*/
+            //while (seriesIteratorObszary.hasNext()) lineChart.getData().addAll(seriesIteratorObszary.next());
             while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
+            //lineChart.getData().addAll(series1);
             obszarWykresu.setData(lineChart.getData());
             /*Scene scene = new Scene(lineChart, 800, 600);
             Stage stage = new Stage();
@@ -390,9 +445,41 @@ public class Controller extends Component implements Initializable {
             stage.setScene(scene);
             stage.show();*/
         }else {
+            for (int i = 0; i < dane.obszary.length; i++) {
+                for (int j = 0; j < dane.obszary[i].length; j++) {
+                    for (int k = 0; k < seriesArrayList.size(); k++) {
+                        if ((dane.obszary[i][j][dane.obszary[i][j].length - 1]).equals(seriesArrayList.get(k).getName())) {
+                            double axisX = Double.parseDouble(dane.obszary[i][j][kolumnaX-1]);
+                            double axisY = Double.parseDouble(dane.obszary[i][j][kolumnaY-1]);
+                            /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
+                            seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
+                            dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
+                            //dane.indeks[i] = i;
+                            seriesArrayList.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                        }
+                    }
+
+                }
+            }
             System.out.println(dane.daneOdczytane.length);
             Iterator<XYChart.Series> seriesIterator = seriesArrayList.iterator();
             System.out.println(seriesArrayList.toString());
+            for (int i = 0; i < dane.obszary.length; i++) {
+                for (int j = 0; j < dane.obszary[i].length; j++) {
+                    for (int k = 0; k < seriesArrayList.size(); k++) {
+                        if ((dane.obszary[i][j][dane.obszary[i][j].length - 1]).equals(seriesArrayList.get(k).getName())) {
+                            double axisX = Double.parseDouble(dane.obszary[i][j][kolumnaX-1]);
+                            double axisY = Double.parseDouble(dane.obszary[i][j][kolumnaY-1]);
+                            /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
+                            seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
+                            dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
+                            //dane.indeks[i] = i;
+                            seriesArrayList.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                        }
+                    }
+
+                }
+            }
             for (int i = 0; i < dane.daneOdczytane.length; i++) {
                 for (int k = 0; k < seriesArrayList.size(); k++) {
                     if ((dane.daneOdczytane[i][dane.daneOdczytane[i].length - 1]).equals(seriesArrayList.get(k).getName())) {
@@ -406,10 +493,22 @@ public class Controller extends Component implements Initializable {
                         seriesArrayList.get(k).getData().add(dane.wezlytablica[i].getData());
                     }
                 }
+
             }
+
+            /*XYChart.Series series1 = new XYChart.Series();
+            for(int i = 0; i<dane.obszary.length; i++)
+            {
+                double axisX = Double.parseDouble(dane.obszary[i][kolumnaX-1]);
+                double axisY = Double.parseDouble(dane.obszary[i][kolumnaY-1]);
+                series1.getData().add(new XYChart.Data(axisX, axisY));
+            }*/
+            //lineChart.getData().addAll(series1);
             while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
             obszarWykresu.setData(lineChart.getData());
-            /*Scene scene = new Scene(lineChart, 500, 400);
+            /*lineChart.setMaxHeight(max_height);
+
+            Scene scene = new Scene(lineChart, 500, 400);
             Stage stage = new Stage();
             stage.setTitle("Wykres");
             stage.setScene(scene);
@@ -420,6 +519,77 @@ public class Controller extends Component implements Initializable {
                 dane.wezlytablica[i].data.getNode().setOnMouseClicked(mouseEvent -> najblizsiSasiedzi(finalI));
             }
         }
+        int id = 1;
+        int id2 = 1;
+        XYChart.Series tmp;
+        /*for (int k = 0; k < seriesArrayList.size(); k++) {
+             tmp = seriesArrayList.get(k);
+            if(tmp.getName().substring(tmp.getName().length() - 1).equals("O")){
+                //tmp.getChart().getStyleClass().add("id"+id2+"O");
+
+                Set<Node> nodes = tmp.getChart().lookupAll(".chart-symbol");
+                for (Node n : nodes) {
+                    StringBuilder style = new StringBuilder();
+                    //style.append("-fx-background-color: CHART_COLOR_"+id2);
+                    style.append(" -fx-background-color: CHART_COLOR_"+id2+";\n" +
+                            "                        -fx-background-radius: 5px;\n" +
+                            "                        -fx-padding: 5px;\n" +
+                            "                        -fx-opacity: 0.5;");
+                    n.setStyle(style.toString());
+                    //System.out.println("k: "+(k+1)+" S:"+style);
+                }
+                id2++;
+            }else{
+                //tmp.getChart().getStyleClass().add("id"+id2);
+
+                Set<Node> nodes = tmp.getChart().lookupAll(".chart-symbol");
+                for (Node n : nodes) {
+                    StringBuilder style = new StringBuilder();
+                    //style.append("-fx-background-color: CHART_COLOR_"+id);
+                    style.append("-fx-background-color: CHART_COLOR_"+id+";\n" +
+                            "                        -fx-background-radius: 5px;\n" +
+                            "                        -fx-padding: 5px;");
+                    n.setStyle(style.toString());
+                    //System.out.println("k: "+(k+1)+" S:"+style);
+                }
+                id++;
+            }
+        }*/
+
+        /*for (int k = 0; k < seriesArrayList.size(); k++) {
+            tmp = seriesArrayList.get(k);
+            Set<Node> nodes = tmp.getChart().lookupAll(".chart-symbol");
+            for (Node n : nodes) {
+
+
+                if(tmp.getName().substring(tmp.getName().length() - 1).equals("O")){
+                    StringBuilder style = new StringBuilder();
+                    //style.append("-fx-background-color: CHART_COLOR_"+id2);
+                    style.append(" -fx-background-color: CHART_COLOR_"+id2+";\n" +
+                            "                        -fx-background-radius: 5px;\n" +
+                            "                        -fx-padding: 5px;\n" +
+                            "                        -fx-opacity: 0.5;");
+                    n.setStyle(style.toString());
+                    id2++;
+                }else{
+                    StringBuilder style = new StringBuilder();
+                    //style.append("-fx-background-color: CHART_COLOR_"+id);
+                    style.append(" -fx-background-color: CHART_COLOR_"+id+";\n" +
+                            "                        -fx-background-radius: 5px;\n" +
+                            "                        -fx-padding: 5px;\n" +
+                            "                        -fx-opacity: 0.5;");
+                    n.setStyle(style.toString());
+                    id++;
+                }
+            }
+        }*/
+
+        for (int k = 0; k < seriesArrayList.size(); k++) {
+            XYChart.Series tmp2 = seriesArrayList.get(k);
+            System.out.println(tmp2.getChart().getId()+' '+ tmp2.getName());
+        }
+        lineChart.applyCss();
+
     }
 
     public void drawChart2(int kolumnaX, int kolumnaY) {
@@ -439,6 +609,7 @@ public class Controller extends Component implements Initializable {
             }
 
         }
+
         Iterator<String> c = h.iterator();
         System.out.println(h.toString());
         while (c.hasNext()) {
@@ -499,6 +670,106 @@ public class Controller extends Component implements Initializable {
             }
 
         }
+    }
+
+    public String[][][] plaszczyznaDecyzji(boolean zbior){
+        int gestosc = 10;
+        int x_min = Integer.MAX_VALUE;
+        int x_max = Integer.MIN_VALUE;
+        int y_min = Integer.MAX_VALUE;
+        int y_max = Integer.MIN_VALUE;
+        ArrayList<XYChart.Series> seriesArrayList = new ArrayList<>();
+        seriesArrayList.clear();
+
+        for(int i = 0; i<dane.daneOdczytane.length; i++){
+            int x = Integer.parseInt(dane.daneOdczytane[i][Integer.parseInt(kolumnaX.getText())-1]);
+            if(x > x_max){
+                x_max = x;
+            }
+            if(x < x_min){
+                x_min = x;
+            }
+            int y = Integer.parseInt(dane.daneOdczytane[i][Integer.parseInt(kolumnaY.getText())-1]);
+            if(y > y_max){
+                y_max = y;
+            }
+            if(y < y_min){
+                y_min = y;
+            }
+        }
+        x_min-=1;
+        x_max+=1;
+        y_min-=1;
+        y_max+=1;
+
+        max_height = y_max;
+        max_width = x_max;
+
+        /*double gestoscx =  (double) Math.abs(x_min-x_max)/gestosc;
+        double gestoscy =  (double) Math.abs(y_min-y_max)/gestosc;*/
+        int gestoscx =  Math.abs(x_min-x_max)*gestosc;
+        int gestoscy =  Math.abs(y_min-y_max)*gestosc;
+        double skalax =  (double) (x_max+1)/gestosc;
+        double skalay =  (double) (y_max+1)/gestosc;
+        skalax = (double)1/10;
+        skalay = (double)1/10;
+        String[][][] plaszczyzna = new String[gestoscx][gestoscy][dane.daneOdczytane[0].length-1];
+        String[][][] plaszczyzna_klasy = new String[gestoscx][gestoscy][dane.daneOdczytane[0].length];
+        for(int i = 0; i<plaszczyzna.length; i++){
+            for(int j = 0; j<plaszczyzna[0].length; j++){
+                for(int k = 0; k<plaszczyzna[0][0].length; k++){
+                    plaszczyzna[i][j][k] = "0";
+                    plaszczyzna_klasy[i][j][k] = "0";
+                }
+            }
+        }
+        /*for(int i = x_min; i<x_min; skalax+=skalax){
+            plaszczyzna[i][Integer.parseInt(kolumnaX.getText())-1] = Double.toString((double)i);
+            plaszczyzna[i][Integer.parseInt(kolumnaY.getText())-1] = Double.toString((double)i);
+            plaszczyzna_klasy[i][Integer.parseInt(kolumnaX.getText())-1] = Double.toString(i*skalax);
+            plaszczyzna_klasy[i][Integer.parseInt(kolumnaY.getText())-1] = Double.toString(i*skalay);
+        }*/
+        int tmp = 0;
+        for(int z = 0; z<gestoscx; z++){
+            for(int i = 0; i<gestoscy; i++){
+                plaszczyzna[z][i][Integer.parseInt(kolumnaX.getText())-1] = Double.toString((double)(z*skalax)+x_min);
+                plaszczyzna[z][i][Integer.parseInt(kolumnaY.getText())-1] = Double.toString((double)(i*skalay)+y_min);
+                plaszczyzna_klasy[z][i][Integer.parseInt(kolumnaX.getText())-1] = Double.toString((double)(z*skalax)+x_min);
+                plaszczyzna_klasy[z][i][Integer.parseInt(kolumnaY.getText())-1] = Double.toString((double)(i*skalay)+y_min);
+            }
+        }
+        String[][] tmp_dane = new String[dane.daneOdczytane.length][dane.daneOdczytane[0].length];
+        for(int i = 0; i<tmp_dane.length; i++){
+            for(int j = 0; j<tmp_dane[i].length; j++){
+                if(j == Integer.parseInt(kolumnaX.getText())-1 || j == Integer.parseInt(kolumnaY.getText())-1
+                        || j == tmp_dane[i].length-1){
+                    tmp_dane[i][j] = dane.daneOdczytane[i][j];
+                }else{
+                    tmp_dane[i][j] = "0";
+                }
+            }
+        }
+        for(int z = 0; z<gestoscx; z++){
+            for(int i = 0; i<gestoscy; i++){
+                if(zbior){
+                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor(plaszczyzna[z][i],tmp_dane)+"O";
+                }else{
+                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor(plaszczyzna[z][i],dane.zbior_uczacy)+"O";
+                }
+            }
+        }
+        System.out.println("Dziala plaszczyzna");
+        System.out.println("skalax "+skalax);
+        System.out.println("skalay "+skalay);
+        for(int i = 0; i<plaszczyzna_klasy.length; i++){
+            for(int j = 0; j<plaszczyzna_klasy[0].length; j++){
+                System.out.print(plaszczyzna_klasy[i][j][Integer.parseInt(kolumnaX.getText())-1]+" ,");
+                System.out.print(plaszczyzna_klasy[i][j][Integer.parseInt(kolumnaX.getText())-1]+" ,");
+                System.out.print(plaszczyzna_klasy[i][j][plaszczyzna_klasy[i][j].length-1]);
+            }
+            System.out.println();
+        }
+        return plaszczyzna_klasy;
     }
 
     public void najblizsiSasiedzi(int nr){
@@ -571,7 +842,6 @@ public class Controller extends Component implements Initializable {
                 XYChart.Data xy = dane.wezlytablicaUczacy[tab[i]].getData();
                 xy.getNode().setScaleX(1.6);
                 xy.getNode().setScaleY(1.6);
-                System.out.println("o chuj chodzi");
             }
         }
         dane.flaga = false;
@@ -611,7 +881,7 @@ public class Controller extends Component implements Initializable {
 
         }
 
-        System.out.println("wyrównuje");
+        //System.out.println("wyrównuje");
 
         /*if(!kolumnaX.getText().isEmpty() && !kolumnaY.getText().isEmpty()){
             rysujWykres(1);
