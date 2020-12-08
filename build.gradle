@@ -26,15 +26,5 @@ dependencies {
     compile group: 'de.jensd', name: 'fontawesomefx', version: '8.2'
 }
 
-task fatJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Example',
-                'Implementation-Version': version,
-                'Main-Class': 'gr4.Main'
-    }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
-}
 
 mainClassName = 'gr4.Main'
