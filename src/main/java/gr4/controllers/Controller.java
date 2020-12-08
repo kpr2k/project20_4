@@ -3,6 +3,7 @@ package gr4.controllers;
 import com.opencsv.CSVReader;
 import gr4.Wezel;
 import gr4.dane;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -347,35 +348,46 @@ public class Controller extends Component implements Initializable {
         seriesArrayList.clear();
         ArrayList<XYChart.Series> seriesArrayListObszary = new ArrayList<>();
         seriesArrayListObszary.clear();
+        ArrayList<String> seriesArrayListWezly = new ArrayList<>();
+        seriesArrayListWezly.clear();
         final NumberAxis yAxis = new NumberAxis();
         final NumberAxis xAxis = new NumberAxis();
         final ScatterChart<Number, Number> lineChart = new ScatterChart<>(xAxis, yAxis);
         final ScatterChart<Number, Number> lineChart2 = new ScatterChart<>(xAxis, yAxis);
-        lineChart.setStyle("Obszary.css");
+        //lineChart.setStyle("Obszary.css");
         dane.obszary = plaszczyznaDecyzji(true);
         dane.wezlytablicaObszary = new Wezel[dane.obszary.length];
         yAxis.setLabel("OSY");
         xAxis.setLabel("OSX");
         HashSet<String> h = new HashSet<String>();
-        for(int i = 0; i<dane.daneOdczytane.length; i++) {
-            if(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]!=null &&!(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("Y"))
-                    && !(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("default payment next month"))) {
-                h.add(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]);
 
-            }
-
-        }
         for(int i = 0; i<dane.obszary.length; i++) {
             for(int j = 0; j<dane.obszary[0].length; j++) {
                 h.add(dane.obszary[i][j][dane.obszary[i][j].length-1]);
             }
         }
+
+        for(int i = 0; i<dane.daneOdczytane.length; i++) {
+            if(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]!=null &&!(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("Y"))
+                    && !(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1].equals("default payment next month"))) {
+                h.add(dane.daneOdczytane[i][dane.daneOdczytane[i].length-1]);
+            }
+
+        }
+
+
         Iterator<String> c = h.iterator();
         System.out.println(h.toString());
 
         while (c.hasNext()) {
             XYChart.Series tmp = new XYChart.Series();
             tmp.setName(c.next());
+            /*tmp.setNode(new Node() {
+                @Override
+                public Node lookup(String selector) {
+                    return super.lookup(selector);
+                }
+            });*/
             seriesArrayList.add(tmp);
 
         };
@@ -394,8 +406,9 @@ public class Controller extends Component implements Initializable {
                         /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
                         seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
                         dane.wezlytablica[i] = new Wezel(axisX,axisY,i);
-                        //dane.indeks[i] = i;
+                        dane.wezlytablica[i].data.getNode().setId(seriesArrayList.get(k).getName());
                         seriesArrayList.get(k).getData().add(dane.wezlytablica[i].getData());
+                        seriesArrayListWezly.add(seriesArrayList.get(k).getName());
                     }
                 }
             }
@@ -408,42 +421,17 @@ public class Controller extends Component implements Initializable {
                             /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
                             seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
                             dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
-                            //dane.indeks[i] = i;
                             seriesArrayList.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                            seriesArrayListWezly.add(seriesArrayList.get(k).getName());
                         }
                     }
 
                 }
             }
-            //XYChart.Series series1 = new XYChart.Series();
-            /*for(int i = 2; i<dane.obszary.length; i++)
-            {
-                for (int k=0; k<seriesArrayList.size();k++) {
-                    double axisX = Double.parseDouble(dane.obszary[i][kolumnaX-1]);
-                    double axisY = Double.parseDouble(dane.obszary[i][kolumnaY-1]);
-                        *//*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
-                        seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*//*
-                    dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
-                    //dane.indeks[i] = i;
-                    seriesArrayListObszary.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
-                    series1.getData().add(new XYChart.Data(axisX, axisY));
-                }
-            }*/
-            /*for(int i = 0; i<dane.obszary.length; i++)
-            {
-                double axisX = Double.parseDouble(dane.obszary[i][kolumnaX-1]);
-                double axisY = Double.parseDouble(dane.obszary[i][kolumnaY-1]);
-                seriesArrayList.getData().add(new XYChart.Data(axisX, axisY));
-            }*/
-            //while (seriesIteratorObszary.hasNext()) lineChart.getData().addAll(seriesIteratorObszary.next());
+
             while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
-            //lineChart.getData().addAll(series1);
             obszarWykresu.setData(lineChart.getData());
-            /*Scene scene = new Scene(lineChart, 800, 600);
-            Stage stage = new Stage();
-            stage.setTitle("Wykres");
-            stage.setScene(scene);
-            stage.show();*/
+
         }else {
             for (int i = 0; i < dane.obszary.length; i++) {
                 for (int j = 0; j < dane.obszary[i].length; j++) {
@@ -454,8 +442,8 @@ public class Controller extends Component implements Initializable {
                             /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
                             seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
                             dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
-                            //dane.indeks[i] = i;
                             seriesArrayList.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                            seriesArrayListWezly.add(seriesArrayList.get(k).getName());
                         }
                     }
 
@@ -473,8 +461,10 @@ public class Controller extends Component implements Initializable {
                             /*dane.wezlytablica[i] = new XYChart.Data(axisX, axisY);
                             seriesArrayList.get(k).getData().add(dane.wezlytablica[i]);*/
                             dane.wezlytablicaObszary[i] = new Wezel(axisX,axisY,i);
+                            //dane.wezlytablica[i].data.setExtraValue(seriesArrayList.get(k).getName());
                             //dane.indeks[i] = i;
                             seriesArrayList.get(k).getData().add(dane.wezlytablicaObszary[i].getData());
+                            seriesArrayListWezly.add(seriesArrayList.get(k).getName());
                         }
                     }
 
@@ -485,109 +475,58 @@ public class Controller extends Component implements Initializable {
                     if ((dane.daneOdczytane[i][dane.daneOdczytane[i].length - 1]).equals(seriesArrayList.get(k).getName())) {
                         int axisX = Integer.parseInt(dane.daneOdczytane[i][kolumnaX - 1]);
                         int axisY = Integer.parseInt(dane.daneOdczytane[i][kolumnaY - 1]);
-                        //seriesArrayList.get(k).getData().add(new XYChart.Data(axisX, axisY));
-                        //XYChart.Data data = new XYChart.Data(axisX, axisY);
-                        //new XYChart.Data(axisX, axisY)
                         dane.wezlytablica[i] = new Wezel(axisX,axisY,i);
-                        //dane.indeks[i] = i;
+
                         seriesArrayList.get(k).getData().add(dane.wezlytablica[i].getData());
+                        seriesArrayListWezly.add(seriesArrayList.get(k).getName());
                     }
                 }
 
             }
 
-            /*XYChart.Series series1 = new XYChart.Series();
-            for(int i = 0; i<dane.obszary.length; i++)
-            {
-                double axisX = Double.parseDouble(dane.obszary[i][kolumnaX-1]);
-                double axisY = Double.parseDouble(dane.obszary[i][kolumnaY-1]);
-                series1.getData().add(new XYChart.Data(axisX, axisY));
-            }*/
-            //lineChart.getData().addAll(series1);
             while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
             obszarWykresu.setData(lineChart.getData());
-            /*lineChart.setMaxHeight(max_height);
-
-            Scene scene = new Scene(lineChart, 500, 400);
-            Stage stage = new Stage();
-            stage.setTitle("Wykres");
-            stage.setScene(scene);
-            stage.show();*/
             for (int i = 0; i < dane.wezlytablica.length; i++) {
                 //dane.wezlytablica[i].getNode().setOnMouseClicked(mouseEvent -> System.out.println("dupa"));
                 int finalI = i;
                 dane.wezlytablica[i].data.getNode().setOnMouseClicked(mouseEvent -> najblizsiSasiedzi(finalI));
             }
         }
-        int id = 1;
-        int id2 = 1;
+
+
         XYChart.Series tmp;
-        /*for (int k = 0; k < seriesArrayList.size(); k++) {
+
+        for (int k = 0; k < seriesArrayList.size(); k++) {
              tmp = seriesArrayList.get(k);
             if(tmp.getName().substring(tmp.getName().length() - 1).equals("O")){
-                //tmp.getChart().getStyleClass().add("id"+id2+"O");
-
                 Set<Node> nodes = tmp.getChart().lookupAll(".chart-symbol");
                 for (Node n : nodes) {
-                    StringBuilder style = new StringBuilder();
-                    //style.append("-fx-background-color: CHART_COLOR_"+id2);
-                    style.append(" -fx-background-color: CHART_COLOR_"+id2+";\n" +
-                            "                        -fx-background-radius: 5px;\n" +
-                            "                        -fx-padding: 5px;\n" +
-                            "                        -fx-opacity: 0.5;");
-                    n.setStyle(style.toString());
-                    //System.out.println("k: "+(k+1)+" S:"+style);
+                        StringBuilder style = new StringBuilder();
+                        style.append(" -fx-background-radius: 0;\n" +
+                                "    -fx-shape: null;\n" +
+                                "    -fx-padding: 5px;");
+                        n.setStyle(style.toString());
                 }
-                id2++;
             }else{
-                //tmp.getChart().getStyleClass().add("id"+id2);
-
                 Set<Node> nodes = tmp.getChart().lookupAll(".chart-symbol");
                 for (Node n : nodes) {
                     StringBuilder style = new StringBuilder();
-                    //style.append("-fx-background-color: CHART_COLOR_"+id);
-                    style.append("-fx-background-color: CHART_COLOR_"+id+";\n" +
-                            "                        -fx-background-radius: 5px;\n" +
-                            "                        -fx-padding: 5px;");
+                    style.append(" -fx-background-radius: 0;\n" +
+                            "    -fx-shape: null;\n" +
+                            "    -fx-padding: 5px;");
                     n.setStyle(style.toString());
-                    //System.out.println("k: "+(k+1)+" S:"+style);
                 }
-                id++;
             }
-        }*/
+        }
 
         /*for (int k = 0; k < seriesArrayList.size(); k++) {
             tmp = seriesArrayList.get(k);
-            Set<Node> nodes = tmp.getChart().lookupAll(".chart-symbol");
-            for (Node n : nodes) {
-
-
-                if(tmp.getName().substring(tmp.getName().length() - 1).equals("O")){
-                    StringBuilder style = new StringBuilder();
-                    //style.append("-fx-background-color: CHART_COLOR_"+id2);
-                    style.append(" -fx-background-color: CHART_COLOR_"+id2+";\n" +
-                            "                        -fx-background-radius: 5px;\n" +
-                            "                        -fx-padding: 5px;\n" +
-                            "                        -fx-opacity: 0.5;");
-                    n.setStyle(style.toString());
-                    id2++;
-                }else{
-                    StringBuilder style = new StringBuilder();
-                    //style.append("-fx-background-color: CHART_COLOR_"+id);
-                    style.append(" -fx-background-color: CHART_COLOR_"+id+";\n" +
-                            "                        -fx-background-radius: 5px;\n" +
-                            "                        -fx-padding: 5px;\n" +
-                            "                        -fx-opacity: 0.5;");
-                    n.setStyle(style.toString());
-                    id++;
-                }
-            }
+            Node n = tmp.getNode().lookup(".default-color"+k+".chart-line-symbol");
+            StringBuilder style = new StringBuilder();
+            style.append(" -fx-background-radius: 0;\n" +
+                    "                                    -fx-shape: null;");
+            n.setStyle(style.toString());
         }*/
-
-        for (int k = 0; k < seriesArrayList.size(); k++) {
-            XYChart.Series tmp2 = seriesArrayList.get(k);
-            System.out.println(tmp2.getChart().getId()+' '+ tmp2.getName());
-        }
         lineChart.applyCss();
 
     }
@@ -758,17 +697,17 @@ public class Controller extends Component implements Initializable {
                 }
             }
         }
-        System.out.println("Dziala plaszczyzna");
-        System.out.println("skalax "+skalax);
-        System.out.println("skalay "+skalay);
-        for(int i = 0; i<plaszczyzna_klasy.length; i++){
+        //System.out.println("Dziala plaszczyzna");
+        //System.out.println("skalax "+skalax);
+        //System.out.println("skalay "+skalay);
+        /*for(int i = 0; i<plaszczyzna_klasy.length; i++){
             for(int j = 0; j<plaszczyzna_klasy[0].length; j++){
                 System.out.print(plaszczyzna_klasy[i][j][Integer.parseInt(kolumnaX.getText())-1]+" ,");
                 System.out.print(plaszczyzna_klasy[i][j][Integer.parseInt(kolumnaX.getText())-1]+" ,");
                 System.out.print(plaszczyzna_klasy[i][j][plaszczyzna_klasy[i][j].length-1]);
             }
             System.out.println();
-        }
+        }*/
         return plaszczyzna_klasy;
     }
 
