@@ -96,7 +96,9 @@ public class Controller extends Component implements Initializable {
     double max_width;
     TabelaDanych tabelaDanych;
     public String[] columnNames;
+
     public String[] columnNamesOdleglosc;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -124,8 +126,10 @@ public class Controller extends Component implements Initializable {
                 }
 
                 columnNames = new String[odczyt.size()];
+
                 columnNamesOdleglosc = new String[(odczyt.size())+1];
                 columnNamesOdleglosc[columnNamesOdleglosc.length-1] = "Odleglosc";
+
                 for(int i=0;i<odczyt.size();i++) {
                     columnNames[i]=odczyt.get(i);
                     columnNamesOdleglosc[i]=odczyt.get(i);
@@ -212,7 +216,9 @@ public class Controller extends Component implements Initializable {
 
         }else if (event.getSource()==btnWyswietl) {
             tabelaDanych = new TabelaDanych();
+
             tabelaDanych.piszDane(dane.daneOdczytane,columnNames, columnNamesOdleglosc, dane.zbior_testowy,dane.zbior_uczacy, dane.zbior_uczacy_odleglosci);
+
         }
     }
 
@@ -728,7 +734,9 @@ public class Controller extends Component implements Initializable {
             int nr2 = nr;
 
             System.out.println(nr+" "+nr2);
+
             output.appendText("....................................................................\n");
+
             output.appendText("Wspolrzedne: "+ dane.wezlytablica[nr].getXValue()+", "+dane.wezlytablica[nr].getYValue()+"\n");
             output.appendText("Numer: "+nr2+"\n");
 

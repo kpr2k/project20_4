@@ -55,20 +55,18 @@
                         <Button fx:id="ok" layoutX="98.0" layoutY="203.0" mnemonicParsing="false" onMouseClicked="#onClickEvent" text="OK" />
                         <TextField fx:id="wektor" alignment="CENTER" layoutX="14.0" layoutY="61.0" prefHeight="25.0" prefWidth="202.0" promptText="np. x1,x2,x3" />
                         <Label layoutX="22.0" layoutY="31.0" prefHeight="17.0" prefWidth="185.0" text="Wpisz wektor do sklasyfikowania:" />
-
-                        <Button fx:id="btnKlasa" layoutX="44.0" layoutY="102.0" mnemonicParsing="false" onAction="#klasyfikacjaKNN" prefHeight="26.0" prefWidth="143.0" text="Klasyfikuj wektor" />
-
+                        <Button fx:id="btnKlasa" layoutX="44.0" layoutY="102.0" mnemonicParsing="false" onAction="#klasyfikacjaKNN" prefHeight="26.0" prefWidth="143.0" text="Klasyfikacja kNN" />
                     </children>
                 </AnchorPane>
             </content>
           </Tab>
-            <Tab text="Obliczenie dokładności klasyfikacji metodą n-krotnej walidacji">
+            <Tab text="Klasyfikacja metodą k-krotnej walidacji">
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="87.0" prefWidth="737.0">
                         <children>
-                            <Label layoutX="62.0" layoutY="14.0" prefHeight="25.0" prefWidth="213.0" text="Wpisz liczbę walidacji:" />
-                            <TextField fx:id="parametrKwalidacja" layoutX="46.0" layoutY="48.0" promptText="Liczba walidacji" />
-                        <Button fx:id="btnWektor" layoutX="46.0" layoutY="86.0" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="60.0" prefWidth="150.0" text="Oblicz dokładność (accuracy)" textAlignment="CENTER" wrapText="true" />
+                            <Label layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="213.0" text="Wpisz parametr K (k- krotna walidacja):" />
+                            <TextField fx:id="parametrKwalidacja" layoutX="46.0" layoutY="48.0" promptText="Parametr K" />
+                        <Button fx:id="btnWektor" layoutX="46.0" layoutY="86.0" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="60.0" prefWidth="150.0" text="Klasyfikacja wektora metodą k-krotnej walidacji" textAlignment="CENTER" wrapText="true" />
                         </children>
                     </AnchorPane>
                 </content>
