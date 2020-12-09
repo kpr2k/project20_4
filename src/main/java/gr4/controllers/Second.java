@@ -51,7 +51,7 @@ public class Second extends Component implements Initializable {
     public void onClickEvent(javafx.scene.input.MouseEvent event) throws IOException {
         if (event.getSource() == ok) {
 
-            String sciezkaDoPlik;
+            /*String sciezkaDoPlik;
             JFileChooser otworz = new JFileChooser();
             int wynik = otworz.showOpenDialog(this);
             if (wynik == JFileChooser.APPROVE_OPTION) {
@@ -68,7 +68,7 @@ public class Second extends Component implements Initializable {
                 dane.podzialNaZbiory(Integer.parseInt(rozmiar.getText()));
                 //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3));
                 System.out.println("h(x) = " + dane.wyznaczDokladnosc(Integer.parseInt(parametrP.getText()), Integer.parseInt(parametrK.getText()),dane.zbior_uczacy));
-            }
+            }*/
         }
     }
     @FXML
@@ -78,8 +78,3 @@ public class Second extends Component implements Initializable {
         }
     }
 }
-
-
-
-
-

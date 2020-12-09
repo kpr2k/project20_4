@@ -6,6 +6,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+
+import javafx.stage.Stage;
+
 
 import java.awt.*;
 import java.io.IOException;
@@ -30,12 +34,16 @@ public class Punkt extends Component implements Initializable {
 
     public void onClickEvent(javafx.scene.input.MouseEvent event) throws IOException {
         if (event.getSource() == addPkt) {
+            Stage stage = (Stage) addPkt.getScene().getWindow();
             String str = wspx1.getText();
             String[] t = str.split(",");
             dane.dodajPunkt(t);
-            Controller.drawChart(1,2);
+            //Controller.drawChart(1,2);
+            stage.close();
         }
+
     }
+
     @FXML
     public void klikZamknij(javafx.scene.input.MouseEvent event) {
         if(event.getSource()==close) {
@@ -43,8 +51,3 @@ public class Punkt extends Component implements Initializable {
         }
     }
 }
-
-
-
-
-
