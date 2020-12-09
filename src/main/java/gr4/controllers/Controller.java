@@ -96,6 +96,9 @@ public class Controller extends Component implements Initializable {
     double max_width;
     TabelaDanych tabelaDanych;
     public String[] columnNames;
+
+    public String[] columnNamesOdleglosc;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -123,8 +126,13 @@ public class Controller extends Component implements Initializable {
                 }
 
                 columnNames = new String[odczyt.size()];
+
+                columnNamesOdleglosc = new String[(odczyt.size())+1];
+                columnNamesOdleglosc[columnNamesOdleglosc.length-1] = "Odleglosc";
+
                 for(int i=0;i<odczyt.size();i++) {
                     columnNames[i]=odczyt.get(i);
+                    columnNamesOdleglosc[i]=odczyt.get(i);
                 }
 
             }
@@ -208,7 +216,9 @@ public class Controller extends Component implements Initializable {
 
         }else if (event.getSource()==btnWyswietl) {
             tabelaDanych = new TabelaDanych();
-            tabelaDanych.piszDane(dane.daneOdczytane,columnNames,dane.zbior_testowy,dane.zbior_uczacy);
+
+            tabelaDanych.piszDane(dane.daneOdczytane,columnNames, columnNamesOdleglosc, dane.zbior_testowy,dane.zbior_uczacy, dane.zbior_uczacy_odleglosci);
+
         }
     }
 
@@ -281,8 +291,11 @@ public class Controller extends Component implements Initializable {
             String[] wektor = str.split(",");
 
             //System.out.println(dane.klasyfikujWektor(wektor, dane.zbior_uczacy));
-            output.appendText("Wynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
-            output.appendText("Dokladnosc kNN: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+"\n");
+            output.appendText("Parametr K: " +Integer.parseInt(parametrK.getText()) + "\nParametr P: "+Integer.parseInt(parametrP.getText())+
+                    "\nRozmiar zbioru uczacego: " +Integer.parseInt(rozmiar.getText()));
+            output.appendText("\nWynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
+            output.appendText("Dokladnosc kNN: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+
+                    "\n....................................................................\n");
             //output.appendText(dane.wyznaczDokladnosc(dane.zbior_uczacy)+"\n");
             if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
                 rysujWykres(1);
@@ -325,9 +338,11 @@ public class Controller extends Component implements Initializable {
             //dane.podzialNaZbiory();
             //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
 
-            String wynik = String.format("%.2f", dane.klasyfikujWalidacja(wektor));
+            String wynik = String.format("%.6f", dane.klasyfikujWalidacja(wektor));
             System.out.println(wynik);
-            output.appendText("Dokladnosc (srednia) klasyfikacji metoda k-krotnej walidacji:" + wynik + "\n");
+            output.appendText("Parametr K: " +Integer.parseInt(parametrK.getText()) + "\nParametr P: "+Integer.parseInt(parametrP.getText())+
+                    "\nIlosc walidacji: "+Integer.parseInt(parametrKwalidacja.getText())+"\nDokladnosc klasyfikacji: " + wynik +
+                    "\n....................................................................\n");
             //output.appendText(wynik + "\n");
             if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
                 rysujWykres(1);
@@ -339,7 +354,7 @@ public class Controller extends Component implements Initializable {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd");
             alert.setHeaderText("Nie wypełniono wszystkich pól");
-            alert.setContentText("Aby sklasyfikować wektor  metodą k-krotnej walidacji należy podać wszystkie parametry w zakładkach Klasyfikacja kNN oraz Klasyfikacja Metodą k-krotnej walidacji!");
+            alert.setContentText("Aby sklasyfikować wektor  metodą n-krotnej walidacji należy podać wszystkie parametry w zakładkach Klasyfikacja kNN oraz Klasyfikacja Metodą n-krotnej walidacji!");
             alert.showAndWait();
         }
     }
@@ -719,6 +734,9 @@ public class Controller extends Component implements Initializable {
             int nr2 = nr;
 
             System.out.println(nr+" "+nr2);
+
+            output.appendText("....................................................................\n");
+
             output.appendText("Wspolrzedne: "+ dane.wezlytablica[nr].getXValue()+", "+dane.wezlytablica[nr].getYValue()+"\n");
             output.appendText("Numer: "+nr2+"\n");
 
