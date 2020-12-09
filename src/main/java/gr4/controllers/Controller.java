@@ -1,9 +1,7 @@
 package gr4.controllers;
 
 import com.opencsv.CSVReader;
-
 import gr4.TabelaDanych;
-
 import gr4.Wezel;
 import gr4.dane;
 import javafx.application.Platform;
@@ -92,15 +90,12 @@ public class Controller extends Component implements Initializable {
     @FXML
     private Button btnWyswietl;
 
-
     JFrame f;
     JTable k;
     double max_height;
     double max_width;
-
     TabelaDanych tabelaDanych;
     public String[] columnNames;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -179,7 +174,6 @@ public class Controller extends Component implements Initializable {
                 alert.setHeaderText("Brak danych");
                 alert.setContentText("Nie zostały wczytane żadne dane");
                 alert.showAndWait();
-
             }
         }else if (event.getSource()==aktualizacjaRozmiar) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -215,7 +209,6 @@ public class Controller extends Component implements Initializable {
         }else if (event.getSource()==btnWyswietl) {
             tabelaDanych = new TabelaDanych();
             tabelaDanych.piszDane(dane.daneOdczytane,columnNames,dane.zbior_testowy,dane.zbior_uczacy);
-
         }
     }
 
@@ -261,7 +254,6 @@ public class Controller extends Component implements Initializable {
                         drawChart2(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
                     }
                 }
-
 
             }else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -577,7 +569,6 @@ public class Controller extends Component implements Initializable {
                         double axisY = Double.parseDouble(dane.zbior_uczacy[i][kolumnaY-1]);
                         dane.wezlytablicaUczacy[i] = new Wezel(axisX,axisY,i);
                         seriesArrayList.get(k).getData().add(dane.wezlytablicaUczacy[i].getData());
-
                     }
                 }
             }
@@ -602,29 +593,6 @@ public class Controller extends Component implements Initializable {
                         dane.wezlytablicaUczacy[i] = new Wezel(axisX,axisY,i);
                         dane.wezlytablicaUczacy[i].indeks = dane.porownanie[i];
                         seriesArrayList.get(k).getData().add(dane.wezlytablicaUczacy[i].getData());
-
-                    }
-                }
-            }
-            while (seriesIterator.hasNext()) lineChart.getData().addAll(seriesIterator.next());
-            obszarWykresuUczacy.setData(lineChart.getData());
-
- 
-
-        }else {
-            System.out.println(dane.zbior_uczacy.length);
-            Iterator<XYChart.Series> seriesIterator = seriesArrayList.iterator();
-            System.out.println(seriesArrayList.toString());
-            for (int i = 0; i < dane.zbior_uczacy.length; i++) {
-                for (int k = 0; k < seriesArrayList.size(); k++) {
-                    if ((dane.zbior_uczacy[i][dane.zbior_uczacy[i].length - 1]).equals(seriesArrayList.get(k).getName())) {
-                        int axisX = Integer.parseInt(dane.zbior_uczacy[i][kolumnaX - 1]);
-                        int axisY = Integer.parseInt(dane.zbior_uczacy[i][kolumnaY - 1]);
-                        //seriesArrayList.get(k).getData().add(new XYChart.Data(axisX, axisY));
-                        //XYChart.Data data = new XYChart.Data(axisX, axisY);
-                        dane.wezlytablicaUczacy[i] = new Wezel(axisX,axisY,i);
-                        dane.wezlytablicaUczacy[i].indeks = dane.porownanie[i];
-                        seriesArrayList.get(k).getData().add(dane.wezlytablicaUczacy[i].getData());
                     }
                 }
             }
@@ -635,14 +603,11 @@ public class Controller extends Component implements Initializable {
             stage.setTitle("Wykres");
             stage.setScene(scene);
             stage.show();*/
-
             for (int i = 0; i < dane.wezlytablicaUczacy.length; i++) {
                 //dane.wezlytablica[i].getNode().setOnMouseClicked(mouseEvent -> System.out.println("dupa"));
                 int finalI = i;
                 dane.wezlytablicaUczacy[i].data.getNode().setOnMouseClicked(mouseEvent -> najblizsiSasiedziUczacy(finalI));
             }
-
-
 
         }
     }
@@ -830,85 +795,6 @@ public class Controller extends Component implements Initializable {
         }else{
             obszarWykresuUczacy.setOnMouseClicked(null);
             dane.flaga_sasiedzi = true;
-
-
-            System.out.println(nr+" "+nr2);
-            output.appendText("Wspolrzedne: "+ dane.wezlytablica[nr].getXValue()+", "+dane.wezlytablica[nr].getYValue()+"\n");
-            output.appendText("Numer: "+nr2+"\n");
-
-            String[] w = new String[dane.daneOdczytane[nr2].length-1];
-            for (int i=0;i<dane.daneOdczytane[nr2].length-1;i++){
-                w[i]=dane.daneOdczytane[nr2][i];
-            }
-            //output.appendText("Wspolrzedne: "+w[0]+", "+w[1]+"\n");
-            dane.klasyfikujWektor(w,dane.daneOdczytane); ///
-
-            int[] tab = dane.WybierzNajblizsiSasiedzi();
-
-            for (int i=0;i<tab.length;i++){
-                if(dane.wezlytablica[tab[i]].indeks != nr2){
-                    output.appendText("SASIAD NR :"+dane.wezlytablica[tab[i]].indeks);
-                    output.appendText("- ("+dane.wezlytablica[tab[i]].getXValue()+", "+dane.wezlytablica[tab[i]].getYValue()+")\n");
-                    XYChart.Data xy = dane.wezlytablica[tab[i]].getData();
-                    xy.getNode().setScaleX(1.6);
-                    xy.getNode().setScaleY(1.6);
-                }
-            }
-            dane.flaga = false;
-
-            if(dane.flaga_sasiedzi_2) {
-                obszarWykresu.setOnMouseClicked(mouseEvent -> wyrownajWykres(false));
-                dane.flaga_sasiedzi_2=false;
-
-            }else{
-                obszarWykresu.setOnMouseClicked(null);
-                dane.flaga_sasiedzi_2 = true;
-            }
-        }else{
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Błąd");
-            alert.setHeaderText("Nie wypełniono wszystkich pól");
-            alert.setContentText("Aby wyswietlić najbliższych sąsiadów nalezy podać parametr K");
-            alert.showAndWait();
-        }
-    }
-
-    public void najblizsiSasiedziUczacy(int nr){
-        int nr2 = dane.wezlytablica[dane.porownanie[nr]].indeks;
-        dane.flaga = true;
-        System.out.println(nr+" "+nr2);
-
-        output.appendText("Wspolrzedne: "+ dane.wezlytablicaUczacy[nr].getXValue()+", "+dane.wezlytablicaUczacy[nr].getYValue()+"\n");
-        output.appendText("Numer: "+nr2+"\n");
-        String[] w = new String[dane.daneOdczytane[nr2].length-1];
-        for (int i=0;i<dane.daneOdczytane[nr2].length-1;i++){
-            w[i]=dane.daneOdczytane[nr2][i];
-        }
-        //output.appendText("Wspolrzedne: "+w[0]+", "+w[1]+"\n");
-        dane.klasyfikujWektor(w,dane.zbior_uczacy); ///
-
-        int[] tab = dane.WybierzNajblizsiSasiedzi();
-
-        for (int i=0;i<tab.length;i++){
-            if(dane.wezlytablicaUczacy[tab[i]].indeks != nr2){
-                output.appendText("SASIAD NR :"+dane.wezlytablicaUczacy[tab[i]].indeks);
-                output.appendText("- ("+dane.wezlytablicaUczacy[tab[i]].getXValue()+", "+dane.wezlytablicaUczacy[tab[i]].getYValue()+")\n");
-                XYChart.Data xy = dane.wezlytablicaUczacy[tab[i]].getData();
-                xy.getNode().setScaleX(1.6);
-                xy.getNode().setScaleY(1.6);
-            }
-        }
-        dane.flaga = false;
-
-        if(dane.flaga_sasiedzi) {
-
-            //dane.wezlytablicaUczacy[nr2].data.getNode().setOnMouseClicked(mouseEvent -> wyrownajWykres(true));
-            obszarWykresuUczacy.setOnMouseClicked(mouseEvent -> wyrownajWykres(true));
-            dane.flaga_sasiedzi=false;
-
-        }else{
-            obszarWykresuUczacy.setOnMouseClicked(null);
-            dane.flaga_sasiedzi = true;
         }
 
     }
@@ -937,30 +823,11 @@ public class Controller extends Component implements Initializable {
 
         //System.out.println("wyrównuje");
 
-
-
-    public void wyrownajWykres(boolean b){
-        if(b){
-            for (int i=0;i<dane.wezlytablicaUczacy.length;i++){
-                XYChart.Data xy = dane.wezlytablicaUczacy[i].getData();
-                xy.getNode().setScaleX(1);
-                xy.getNode().setScaleY(1);
+        /*if(!kolumnaX.getText().isEmpty() && !kolumnaY.getText().isEmpty()){
+            rysujWykres(1);
+            if(!rozmiar.getText().isEmpty()){
+                rysujWykres(2);
             }
-            //dane.flaga_sasiedzi=true;
-
-        }else{
-            for (int i=0;i<dane.wezlytablica.length;i++){
-                XYChart.Data xy = dane.wezlytablica[i].getData();
-                xy.getNode().setScaleX(1);
-                xy.getNode().setScaleY(1);
-            }
-            //dane.flaga_sasiedzi_2=true;
-            //
-
-        }
-
-        //System.out.println("wyrównuje");
-
-
+        }*/
     }
 }

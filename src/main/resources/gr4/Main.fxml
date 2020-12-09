@@ -15,9 +15,7 @@
                </children>
             </Pane>
             <Button fx:id="btnRead" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="27.0" prefWidth="173.0" text="Wczytaj dane" />
-
              <Button fx:id="btnWyswietl" mnemonicParsing="false" onMouseClicked="#onClickEvent" prefHeight="27.0" prefWidth="173.0" text="Wyswietl dane" />
-
             <Button fx:id="btnDane" mnemonicParsing="false" onAction="#addPoint" prefHeight="25.0" prefWidth="155.0" text="Dodaj Dane">
                <VBox.margin>
                   <Insets bottom="20.0" />
