@@ -29,14 +29,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 public class Controller extends Component implements Initializable {
+    private static final String LAST_USED_FOLDER = "";
     @FXML
     private Button btnRead;
 
@@ -104,9 +107,14 @@ public class Controller extends Component implements Initializable {
 
     public void onClickEvent(javafx.scene.input.MouseEvent event) throws IOException {
         if(event.getSource()==btnRead) {
+            obszarWykresu.getData().clear();
             ArrayList<String> odczyt = new ArrayList();
             String sciezkaDoPlik;
-            JFileChooser otworz= new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "csv");
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser otworz= new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
+            otworz.setFileFilter(filter);
             int wynik = otworz.showOpenDialog(this);
             if(wynik== JFileChooser.APPROVE_OPTION)
             {
@@ -130,7 +138,7 @@ public class Controller extends Component implements Initializable {
                     columnNames[i]=odczyt.get(i);
                     columnNamesOdleglosc[i]=odczyt.get(i);
                 }
-
+                prefs.put(LAST_USED_FOLDER, otworz.getSelectedFile().getParent());
             }
         } else if (event.getSource()==btnChart) {
             rysujWykres(1);
@@ -701,9 +709,9 @@ public class Controller extends Component implements Initializable {
         for(int z = 0; z<gestoscx; z++){
             for(int i = 0; i<gestoscy; i++){
                 if(zbior){
-                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor(plaszczyzna[z][i],tmp_dane)+"O";
+                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor2(plaszczyzna[z][i],tmp_dane)+"O";
                 }else{
-                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor(plaszczyzna[z][i],dane.zbior_uczacy)+"O";
+                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor2(plaszczyzna[z][i],dane.zbior_uczacy)+"O";
                 }
             }
         }
@@ -737,7 +745,7 @@ public class Controller extends Component implements Initializable {
                 w[i]=dane.daneOdczytane[nr2][i];
             }
             //output.appendText("Wspolrzedne: "+w[0]+", "+w[1]+"\n");
-            dane.klasyfikujWektor(w,dane.daneOdczytane); ///
+            dane.klasyfikujWektor2(w,dane.daneOdczytane); ///
 
             int[] tab = dane.WybierzNajblizsiSasiedzi();
 
@@ -781,7 +789,7 @@ public class Controller extends Component implements Initializable {
             w[i]=dane.daneOdczytane[nr2][i];
         }
         //output.appendText("Wspolrzedne: "+w[0]+", "+w[1]+"\n");
-        dane.klasyfikujWektor(w,dane.zbior_uczacy); ///
+        dane.klasyfikujWektor2(w,dane.zbior_uczacy); ///
 
         int[] tab = dane.WybierzNajblizsiSasiedzi();
 

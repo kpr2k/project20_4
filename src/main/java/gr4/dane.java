@@ -88,6 +88,9 @@ public class dane {
         try {
             // Linie pliku zostaja umieszoczne w liscie
             odczyt = (ArrayList) Files.readAllLines(sciezka);
+            for(int i = 0; i < odczyt.size();i++) {
+                if (odczyt.get(i).isEmpty()) odczyt.remove(i);
+            }
         } catch (IOException ex) {
             System.out.println("Brak pliku!");
         }
