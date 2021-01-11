@@ -24,7 +24,9 @@ public class dane {
     public static String[][] zbior_uczacy;
     public static String[][] zbior_testowy;
     public static String[][] tabL;
+
     public static String[][] zbior_uczacy_odleglosci;
+
     public static String[][][] obszary;
     public static int typ_pliku = 0;
     public static int ilosc;

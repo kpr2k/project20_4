@@ -1,0 +1,25 @@
+.default-color0.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-shape: null;
+}
+.default-color1.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-shape: null;
+}
+.default-color2.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-shape: null;
+}
+.default-color3.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-shape: null;
+    -fx-padding: 5px;
+}
+.default-color4.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-shape: null;
+}
+.default-color5.chart-line-symbol {
+    -fx-background-radius: 0;
+    -fx-padding: 5px;
+}

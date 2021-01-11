@@ -18,10 +18,12 @@ public class TabelaDanych extends Component implements Initializable {
     public TableView view;
     public TableView viewTest;
     public TableView viewUcz;
+
     public TableView viewUczodleglosc;
     public DefaultTableAdapter dta;
     public BorderPane pnlRoot;
     public void piszDane(Object[][] rowData, String[] columnNames, String[] columnNamesOdleglosc, Object[][] test, Object[][] ucz, Object[][] ucz_odleglosc) {
+
         AnchorPane anchorPane = new AnchorPane();
         view = new TableView();
         dta = new DefaultTableAdapter(view, rowData, columnNames);
@@ -29,8 +31,10 @@ public class TabelaDanych extends Component implements Initializable {
         dta = new DefaultTableAdapter(viewTest, test, columnNames);
         viewUcz = new TableView();
         dta = new DefaultTableAdapter(viewUcz, ucz, columnNames);
+
         viewUczodleglosc = new TableView();
         dta = new DefaultTableAdapter(viewUczodleglosc, ucz_odleglosc, columnNamesOdleglosc);
+
         Stage stage = new Stage();
         stage.setTitle("Tabela danych");
         stage.setWidth(400);
@@ -42,7 +46,9 @@ public class TabelaDanych extends Component implements Initializable {
         tabPane.getTabs().add(new Tab("Dane",view));
         tabPane.getTabs().add(new Tab("Zbior testujacych",viewTest));
         tabPane.getTabs().add(new Tab("Zbior uczacych",viewUcz));
+
         tabPane.getTabs().add(new Tab("Dane z odlegloscia od wektora",viewUczodleglosc));
+
         pnlRoot.setTop(tabPane);
         pnlRoot.setCenter(view);
         Scene scene = new Scene(pnlRoot);
