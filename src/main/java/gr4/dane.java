@@ -24,10 +24,13 @@ public class dane {
     public static String[][] zbior_uczacy;
     public static String[][] zbior_testowy;
     public static String[][] tabL;
+
+    public static String[][] zbior_uczacy_odleglosci;
+
     public static String[][][] obszary;
     public static int typ_pliku = 0;
     public static int ilosc;
-    public static double parametrP;
+    public static int parametrP;
     public static int parametrK;
     public static int rozmiar_uczacy = 0;
     public static int parametrKwalidacja;
@@ -41,9 +44,11 @@ public class dane {
     public static int[] porownanie2;
     public static boolean flaga_sasiedzi = false;
     public static boolean flaga_sasiedzi_2 = false;
+    public static boolean flaga_parametrK = false;
+    public static boolean flaga_parametrP = false;
 
 
-    public static void setParametry(double p, int k, int r){
+    public static void setParametry(int p, int k, int r){
         parametrP = p;
         parametrK = k;
         rozmiar_uczacy = r;
@@ -51,9 +56,11 @@ public class dane {
         wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
         wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-    public static void setParametry(double p, int k){
+    public static void setParametry(int p, int k){
         parametrP = p;
         parametrK = k;
+        flaga_parametrP = true;
+        flaga_parametrK = true;
         //rozmiar_uczacy = 0;
         //podzialNaZbiory();
         //wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
@@ -87,6 +94,9 @@ public class dane {
         try {
             // Linie pliku zostaja umieszoczne w liscie
             odczyt = (ArrayList) Files.readAllLines(sciezka);
+            for(int i = 0; i < odczyt.size();i++) {
+                if (odczyt.get(i).isEmpty()) odczyt.remove(i);
+            }
         } catch (IOException ex) {
             System.out.println("Brak pliku!");
         }
@@ -140,6 +150,126 @@ public class dane {
         double max = 0;
         double iloraz = 1 / p;
         boolean flag = false;
+        for (int i = 0; i < w.length; i++) {
+            System.out.print(w[i]+", ");
+        }
+        zbior_uczacy_odleglosci = new String[zbiorUczacy.length][(zbiorUczacy[0].length)+1];
+        for (int i = 0; i < zbiorUczacy.length; i++) { // zewnętrzena pętla po zbiorze uczących
+            tmp = 0;
+            for (int j = 0; j < zbiorUczacy[i].length; j++) { // wewnętrzna pętla po zbiore uczących
+                zbior_uczacy_odleglosci[i][j]=zbiorUczacy[i][j];
+                if (NumberUtils.isParsable(zbiorUczacy[i][j]) && j<zbiorUczacy[i].length-1 ) {
+                    tmp += pow(abs((Double.parseDouble(zbiorUczacy[i][j])) - Double.parseDouble(w[j])), p);
+                }
+                if (zbiorUczacy[i][j] instanceof String || j==zbiorUczacy[i].length-1) {
+                    klasa = zbiorUczacy[i][j];
+                }
+            }
+            tmp = pow(tmp, iloraz);
+            zbior_uczacy_odleglosci[i][zbiorUczacy[0].length] = Double.toString(tmp);
+            //System.out.println("i = " + i + ", " + klasa + ", L= " + tmp);
+            for (int n = 0; n < tabL.length; n++) { // pętla po tablicy najbliższych sąsiadów
+                if (tabL[n][1] == null) { // wypełnienie tablicy startowymi wartościami
+                    tabL[n][2] = Integer.toString(i);
+                    tabL[n][1] = Double.toString(tmp);
+                    tabL[n][0] = klasa;
+                    max = Double.parseDouble(tabL[0][1]);
+                    tmp2 = 0;
+                    break;
+                } else if (i >= tabL.length) {
+                    flag = true;
+                    if (Double.parseDouble(tabL[n][1]) > max) { // wyznaczenie maksymalnej odległości w tablicy najbliższych sąsiadów
+                        max = Double.parseDouble(tabL[n][1]);
+                        tmp2 = n;
+                    }
+                }
+            }
+            if (Double.parseDouble(tabL[tmp2][1]) > tmp && flag == true) { // zamiana maxa na mniejszą wartość z tablicy uczących
+                tabL[tmp2][2] = Integer.toString(i);
+                tabL[tmp2][1] = Double.toString(tmp);
+                tabL[tmp2][0] = klasa;
+                max = Double.parseDouble(tabL[0][1]);
+                tmp2 = 0;
+            }
+        }
+        int[] results = new int[k]; // ilości powtórzeń
+        String[] tabKlasy = new String[tabL.length]; // sąsiadujące klasy
+        for (int i = 0; i < tabL.length; i++) {
+            tabKlasy[i] = tabL[i][0];
+        }
+        Arrays.sort(tabKlasy);
+        int licznik = 1;
+        max = 0;
+        int wierszMaxa = 0;
+        for (int i = 1; i < tabKlasy.length; i++) { // zliczanie powtórzeń
+            if (tabKlasy[i].equals(tabKlasy[i - 1]) == true) {
+                licznik++;
+            } else {
+                results[i - 1] = licznik;
+                licznik = 1;
+                if (results[i - 1] > max) {
+                    max = results[i - 1];
+                    wierszMaxa = i - 1;
+                }
+            }
+        }
+        results[tabKlasy.length - 1] = licznik;
+        if (results[tabKlasy.length - 1] > max) {
+            max = results[tabKlasy.length - 1];
+            wierszMaxa = tabKlasy.length - 1;
+        }
+        klasa = tabKlasy[wierszMaxa]; // wynik końcowy
+
+        najblizsiSasiedzi = new int[tabL.length];
+        for (int i = 0; i < tabL.length; i++) {
+            najblizsiSasiedzi[i] = Integer.parseInt(tabL[i][2]);
+        }
+
+        System.out.print("\nTablica z najbliższymi sasiadami i ich długość:");
+        for (int i = 0; i < tabL.length; i++) {
+            System.out.println();
+            for (int j = 0; j < tabL[i].length; j++) {
+                System.out.print(tabL[i][j] + ", ");
+            }
+        }
+        /*System.out.println("\n\nPosortowana tablica z najbliższymi sąsiadami:");
+        for (int i = 0; i < tabKlasy.length; i++) {
+            System.out.print(tabKlasy[i] + ", ");
+        }
+        System.out.println("\n\nTablica z ilością powtórzeń");
+        for (int i = 0; i < results.length; i++) {
+            System.out.print(results[i] + ", ");
+        }
+        System.out.println();
+        System.out.println();
+        for (int i = 0; i < tabKlasy.length; i++) { //Wyświetlanie
+            if (results[i] > 0) {
+                System.out.println(tabKlasy[i] + " - " + results[i] + " (powtórzenia)");
+            }
+        }
+        System.out.println("\nWynik: "+klasa+"\n");
+        */
+        System.out.println(klasa);
+        return klasa;
+    }
+
+    public static String klasyfikujWektor2(String[] w, String[][] zbiorUczacy) {
+        double p = parametrP;
+        int k = parametrK;
+        if(flaga){
+            k++;
+        }
+        tabL = new String[k][3]; // tablica najbliższych sąsiadów
+        String klasa = "";
+        double L = 0;
+        double tmp;
+        int tmp2 = 0;
+        double max = 0;
+        double iloraz = 1 / p;
+        boolean flag = false;
+        for (int i = 0; i < w.length; i++) {
+            System.out.print(w[i]+", ");
+        }
         for (int i = 0; i < zbiorUczacy.length; i++) { // zewnętrzena pętla po zbiorze uczących
             tmp = 0;
             for (int j = 0; j < zbiorUczacy[i].length; j++) { // wewnętrzna pętla po zbiore uczących
@@ -209,31 +339,6 @@ public class dane {
             najblizsiSasiedzi[i] = Integer.parseInt(tabL[i][2]);
         }
 
-        /*System.out.print("\nTablica z najbliższymi sasiadami i ich długość:");
-        for (int i = 0; i < tabL.length; i++) {
-            System.out.println();
-            for (int j = 0; j < tabL[i].length; j++) {
-                System.out.print(tabL[i][j] + ", ");
-            }
-        }
-        System.out.println("\n\nPosortowana tablica z najbliższymi sąsiadami:");
-        for (int i = 0; i < tabKlasy.length; i++) {
-            System.out.print(tabKlasy[i] + ", ");
-        }
-        System.out.println("\n\nTablica z ilością powtórzeń");
-        for (int i = 0; i < results.length; i++) {
-            System.out.print(results[i] + ", ");
-        }
-        System.out.println();
-        System.out.println();
-        for (int i = 0; i < tabKlasy.length; i++) { //Wyświetlanie
-            if (results[i] > 0) {
-                System.out.println(tabKlasy[i] + " - " + results[i] + " (powtórzenia)");
-            }
-        }
-        System.out.println("\nWynik: "+klasa+"\n");
-         */
-        System.out.println(klasa);
         return klasa;
     }
 
@@ -387,17 +492,17 @@ public class dane {
         double h_x;
         int zbior_eq = 0;
         for(int i = 0; i<zbior_testowy.length; i++){
-            System.out.println("Wektor testujący o id = "+i);
+            /*System.out.println("Wektor testujący o id = "+i);
             System.out.println("Klasyfikacja: "+zbior_testowy[i][zbior_testowy[i].length-1]);
-            System.out.print("Klasyfikacja knn: ");
+            System.out.print("Klasyfikacja knn: ");*/
             //System.out.println((zbior_testowy[i][zbior_testowy[i].length-1]+" = "+klasyfikujWektor(zbior_testowy[i], p, k)));
-            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor(zbior_testowy[i], zbiorUczacy))){
+            if(zbior_testowy[i][zbior_testowy[i].length-1].equals(klasyfikujWektor2(zbior_testowy[i], zbiorUczacy))){
                 zbior_eq++;
             }
-            System.out.println();
+            //System.out.println();
         }
         h_x = ((double)zbior_eq/zbior_testowy.length);
-        System.out.println("Dokladnosc klasyfikacji: "+h_x);
+        //System.out.println("Dokladnosc klasyfikacji: "+h_x);
         return h_x;
     }
 

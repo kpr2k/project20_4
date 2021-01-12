@@ -1,6 +1,7 @@
 package gr4.controllers;
 
 import com.opencsv.CSVReader;
+import gr4.TabelaDanych;
 import gr4.Wezel;
 import gr4.dane;
 import javafx.application.Platform;
@@ -11,10 +12,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.SubScene;
+import javafx.scene.*;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
@@ -28,14 +26,19 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.prefs.Preferences;
 
 public class Controller extends Component implements Initializable {
+    private static final String LAST_USED_FOLDER = "";
     @FXML
     private Button btnRead;
 
@@ -44,6 +47,9 @@ public class Controller extends Component implements Initializable {
 
     @FXML
     private Button btnWektor;
+
+    @FXML
+    private Button btnKlasa;
 
     @FXML
     private Button aktualizacja;
@@ -86,11 +92,18 @@ public class Controller extends Component implements Initializable {
 
     @FXML
     private Button ok;
+    @FXML
+    private Button btnWyswietl;
 
     JFrame f;
     JTable k;
     double max_height;
     double max_width;
+    TabelaDanych tabelaDanych;
+    public String[] columnNames;
+
+    public String[] columnNamesOdleglosc;
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,10 +111,16 @@ public class Controller extends Component implements Initializable {
     }
 
     public void onClickEvent(javafx.scene.input.MouseEvent event) throws IOException {
+
         if(event.getSource()==btnRead) {
+            obszarWykresu.getData().clear();
             ArrayList<String> odczyt = new ArrayList();
             String sciezkaDoPlik;
-            JFileChooser otworz= new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "csv");
+            Preferences prefs = Preferences.userRoot().node(getClass().getName());
+            JFileChooser otworz= new JFileChooser(prefs.get(LAST_USED_FOLDER,
+                    new File(".").getAbsolutePath()));
+            otworz.setFileFilter(filter);
             int wynik = otworz.showOpenDialog(this);
             if(wynik== JFileChooser.APPROVE_OPTION)
             {
@@ -117,21 +136,24 @@ public class Controller extends Component implements Initializable {
                         odczyt.add("Kolumna"+(i+1));
                     }
                 }
-                f = new JFrame();
-                f.setTitle("Szo to za staroc");
-                String[][] data = dane.daneOdczytane;
-                String[] columnNames = new String[odczyt.size()];
+
+                columnNames = new String[odczyt.size()];
+
+                columnNamesOdleglosc = new String[(odczyt.size())+1];
+                columnNamesOdleglosc[columnNamesOdleglosc.length-1] = "Odleglosc";
+
                 for(int i=0;i<odczyt.size();i++) {
                     columnNames[i]=odczyt.get(i);
+                    columnNamesOdleglosc[i]=odczyt.get(i);
                 }
-                k = new JTable(data, columnNames);
-                k.getAutoResizeMode();
-                JScrollPane sp = new JScrollPane(k);
-                f.add(sp);
-                f.setVisible(true);
+                prefs.put(LAST_USED_FOLDER, otworz.getSelectedFile().getParent());
             }
         } else if (event.getSource()==btnChart) {
+            btnChart.setDisable(true);
             rysujWykres(1);
+            rysujWykres(2);
+
+            btnChart.setDisable(false);
         }else if (event.getSource()==btnWektor) {
             /**
              * Użytkownik musi mieć pole do wpisania:
@@ -146,37 +168,47 @@ public class Controller extends Component implements Initializable {
                 klasyfikacjaKWalidacja();
             }
         }else if (event.getSource()==aktualizacja) {
+            aktualizacja.setDisable(true);
+            btnChart.setDisable(true);
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Błąd");
-            alert.setHeaderText("Nie wypełniono wszystkich pól");
+            alert.setTitle(toUTF8Conversion("Błąd"));
+            alert.setHeaderText(toUTF8Conversion("Nie wypełniono wszystkich pól"));
             if(dane.daneOdczytane != null){
                 if(!parametrP.getText().equals("") && parametrK.getText().equals("")){
-                    alert.setContentText("Nie został podany parametr K!");
+                    alert.setContentText(toUTF8Conversion("Nie został podany parametr K!"));
                     alert.showAndWait();
                 }else if(parametrP.getText().equals("") && !parametrK.getText().equals("")){
 
-                    alert.setContentText("Nie został podany parametr P");
+                    alert.setContentText(toUTF8Conversion("Nie został podany parametr P"));
                     alert.showAndWait();
                 }else if(parametrP.getText().equals("") && parametrK.getText().equals("")){
-                    alert.setContentText("Nie zostały podane parametry K i P");
+                    alert.setContentText(toUTF8Conversion("Nie zostały podane parametry K i P"));
                     alert.showAndWait();
                 }else{
-                    dane.setParametry(Double.parseDouble(parametrP.getText()),
+                    dane.setParametry(Integer.parseInt(parametrP.getText()),
                             Integer.parseInt(parametrK.getText()));
+                    output.appendText("Zaktualizowano parametry."+"\nParametr K: " + dane.parametrK + "\nParametr P: "+dane.parametrP+
+                            "\n....................................................................\n");
                     if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
-                        rysujWykres(1);
+                        //rysujWykres(1);
+                        //rysujWykres(2);
                         if(!rozmiar.getText().isEmpty()){
-                            rysujWykres(2);
+                            //rysujWykres(2);
                         }
                     }
 
                 }
             }else{
-                alert.setTitle("Błąd");
-                alert.setHeaderText("Brak danych");
-                alert.setContentText("Nie zostały wczytane żadne dane");
+                alert.setTitle(toUTF8Conversion("Błąd"));
+                alert.setHeaderText(toUTF8Conversion("Brak danych"));
+                alert.setContentText(toUTF8Conversion("Nie zostały wczytane żadne dane"));
                 alert.showAndWait();
             }
+        }else if (event.getSource()==btnKlasa) {
+            btnKlasa.setDisable(true);
+            klasyfikacjaKNN();
+            btnKlasa.setDisable(false);
+
         }else if (event.getSource()==aktualizacjaRozmiar) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             if(dane.daneOdczytane != null){
@@ -184,31 +216,40 @@ public class Controller extends Component implements Initializable {
                     if(!rozmiar.getText().equals("")){
                         if(dane.sprawdzRozmiar(Integer.parseInt(rozmiar.getText()))){
                             dane.setDaneZbiory(Integer.parseInt(rozmiar.getText()));
+                            output.appendText("Zaktualizowano rozmiar uczacy."+"\nRozmiar zbioru uczacego: " + dane.rozmiar_uczacy +
+                                    "\n....................................................................\n");
                             if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
-                                rysujWykres(1);
-                                rysujWykres(2);
+                                //rysujWykres(1);
+                                //rysujWykres(2);
                             }
                         }else{
-                            alert.setTitle("Błąd");
-                            alert.setHeaderText("Złe dane");
-                            alert.setContentText("Podano zbyt duży rozmiar uczący!");
+                            alert.setTitle(toUTF8Conversion("Błąd"));
+                            alert.setHeaderText(toUTF8Conversion("Złe dane"));
+                            alert.setContentText(toUTF8Conversion("Podano zbyt duży rozmiar uczący!"));
                             alert.showAndWait();
                         }
                     }else{
-                        alert.setTitle("Błąd");
-                        alert.setHeaderText("Nie wypełniono wszystkich pól");
-                        alert.setContentText("Nie podano rozmiaru zbioru!");
+                        alert.setTitle(toUTF8Conversion("Błąd"));
+                        alert.setHeaderText(toUTF8Conversion("Nie wypełniono wszystkich pól"));
+                        alert.setContentText(toUTF8Conversion("Nie podano rozmiaru zbioru!"));
                         alert.showAndWait();
                     }
                 }
             }else{
-                alert.setTitle("Błąd");
-                alert.setHeaderText("Brak danych");
-                alert.setContentText("Nie zostały wczytane żadne dane");
+                alert.setTitle(toUTF8Conversion("Błąd"));
+                alert.setHeaderText(toUTF8Conversion("Brak danych"));
+                alert.setContentText(toUTF8Conversion("Nie zostały wczytane żadne dane"));
                 alert.showAndWait();
             }
 
+        }else if (event.getSource()==btnWyswietl) {
+            tabelaDanych = new TabelaDanych();
+
+            tabelaDanych.piszDane(dane.daneOdczytane,columnNames, columnNamesOdleglosc, dane.zbior_testowy,dane.zbior_uczacy, dane.zbior_uczacy_odleglosci);
+
         }
+        aktualizacja.setDisable(false);
+        btnChart.setDisable(false);
     }
 
     public void onAction(javafx.event.ActionEvent event) throws  IOException{
@@ -220,6 +261,10 @@ public class Controller extends Component implements Initializable {
         stage.setScene(scene);
         stage.show();
 
+    }
+
+    public String toUTF8Conversion(String s){
+        return s;
     }
 
     public void addPoint(javafx.event.ActionEvent event) throws  IOException{
@@ -241,54 +286,100 @@ public class Controller extends Component implements Initializable {
                 if(Integer.parseInt(kolumnaX.getText())>dane.daneOdczytane[0].length-1 ||
                         Integer.parseInt(kolumnaY.getText())>dane.daneOdczytane[0].length-1
                 ){
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setTitle("Błąd");
-                    alert.setHeaderText("Podano nieprawidłowe dane");
-                    alert.setContentText("Podane kolumny nie mogą być narysowane dla wczytanych danych");
-                    alert.showAndWait();
-                }else{
                     if(i == 1){
-                        drawChart(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Błąd");
+                        alert.setHeaderText("Podano nieprawidłowe dane");
+                        alert.setContentText("Podane kolumny nie mogą być narysowane dla wczytanych danych");
+                        alert.showAndWait();
                     }else if(i == 2){
-                        drawChart2(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
+                    }
+                }else{
+                    if(dane.flaga_parametrP == false || dane.flaga_parametrK == false){
+                        if(i == 1){
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Błąd");
+                            alert.setHeaderText("Nie wypełniono wszystkich pól");
+                            alert.setContentText("Aby sklasyfikować wektor należy uzupełnić parametry K i P");
+                            alert.showAndWait();
+                        }else if(i == 2){
+                        }
+                    }else{
+                        if(i == 1){
+                            String rozmiar ="";
+                            if(dane.rozmiar_uczacy == 0) {
+                                rozmiar = ""+(int)dane.daneOdczytane.length/2;
+                            }else{
+                                rozmiar = ""+dane.rozmiar_uczacy;
+                            }
+                            drawChart(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
+                            output.appendText("Narysowano wykres dla podanych parametrow."+"\nParametr K: " + dane.parametrK + "\nParametr P: "+dane.parametrP
+                                    + "\nRozmiar zbioru uczacego: "+rozmiar+
+                                    "\n....................................................................\n");
+                        }else if(i == 2){
+                            drawChart2(Integer.parseInt(kolumnaX.getText()),Integer.parseInt(kolumnaY.getText()));
+                        }
                     }
                 }
 
             }else{
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Błąd");
-                alert.setHeaderText("Nie wypełniono wszystkich pól");
-                alert.setContentText("Aby narysować wykres należy podać numery kolumn w zakładce Rysowanie!");
-                alert.showAndWait();
+                if(i == 1){
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Błąd");
+                    alert.setHeaderText("Nie wypełniono wszystkich pól");
+                    alert.setContentText("Aby narysować wykres należy podać numery kolumn w zakładce Rysowanie!");
+                    alert.showAndWait();
+                }else if(i == 2){
+                }
             }
         }else{
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Błąd");
-            alert.setHeaderText("Nie wczytano pliu");
-            alert.setContentText("Aby narysować wykres należy wczytać plik z danymi!");
-            alert.showAndWait();
+            if(i == 1){
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Błąd");
+                alert.setHeaderText("Nie wczytano pliku");
+                alert.setContentText("Aby narysować wykres należy wczytać plik z danymi!");
+                alert.showAndWait();
+            }else if(i == 2){
+            }
         }
+
     }
 
     public void klasyfikacjaKNN(){
-        if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !rozmiar.getText().isEmpty() && !wektor.getText().isEmpty()){
+        //!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !rozmiar.getText().isEmpty() && !wektor.getText().isEmpty()
+
+        if(dane.flaga_parametrP == true && dane.flaga_parametrK == true && !wektor.getText().isEmpty()){
             //dane dane = new dane();
-            dane.setParametry(Double.parseDouble(parametrP.getText()),
+            dane.setParametry(Integer.parseInt(parametrP.getText()),
                     Integer.parseInt(parametrK.getText()));
 
             String str = wektor.getText();
             String[] wektor = str.split(",");
 
+            String rozmiar ="";
+            if(dane.rozmiar_uczacy == 0) {
+                rozmiar = ""+(int)dane.daneOdczytane.length/2;
+                dane.setDaneZbiory((int)dane.daneOdczytane.length/2);
+            }else{
+                rozmiar = ""+dane.rozmiar_uczacy;
+                dane.setDaneZbiory(dane.rozmiar_uczacy);
+            }
+
+
             //System.out.println(dane.klasyfikujWektor(wektor, dane.zbior_uczacy));
-            output.appendText("Wynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
-            output.appendText("Dokladnosc kNN: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+"\n");
+            output.appendText("Parametr K: " +Integer.parseInt(parametrK.getText()) + "\nParametr P: "+Integer.parseInt(parametrP.getText())+
+                    "\nRozmiar zbioru uczacego: " +Integer.parseInt(rozmiar));
+            output.appendText("\nWynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
+            output.appendText("Dokladnosc kNN: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+
+                    "\n....................................................................\n");
             //output.appendText(dane.wyznaczDokladnosc(dane.zbior_uczacy)+"\n");
-            if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
+            /*if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
                 rysujWykres(1);
+
                 if(!rozmiar.getText().isEmpty()){
                     rysujWykres(2);
                 }
-            }
+            }*/
         }else{
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd");
@@ -302,7 +393,7 @@ public class Controller extends Component implements Initializable {
 
         if(!parametrP.getText().isEmpty() && !parametrK.getText().isEmpty() && !parametrKwalidacja.getText().isEmpty()) {
             //dane dane = new dane();
-            dane.setParametry(Double.parseDouble(parametrP.getText()),
+            dane.setParametry(Integer.parseInt(parametrP.getText()),
                     Integer.parseInt(parametrK.getText()));
             dane.setParametrKWalidacja(Integer.parseInt(parametrKwalidacja.getText()));
             //sciezkaDoPlik= otworz.getSelectedFile().getPath();
@@ -324,21 +415,23 @@ public class Controller extends Component implements Initializable {
             //dane.podzialNaZbiory();
             //System.out.println(dane.klasyfikujWektor(cancer, 2 ,3,dane.zbior_uczacy));
 
-            String wynik = String.format("%.2f", dane.klasyfikujWalidacja(wektor));
+            String wynik = String.format("%.6f", dane.klasyfikujWalidacja(wektor));
             System.out.println(wynik);
-            output.appendText("Dokladnosc (srednia) klasyfikacji metoda k-krotnej walidacji:" + wynik + "\n");
+            output.appendText("Parametr K: " +Integer.parseInt(parametrK.getText()) + "\nParametr P: "+Integer.parseInt(parametrP.getText())+
+                    "\nIlosc walidacji: "+Integer.parseInt(parametrKwalidacja.getText())+"\nDokladnosc klasyfikacji: " + wynik +
+                    "\n....................................................................\n");
             //output.appendText(wynik + "\n");
-            if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
+            /*if(!kolumnaX.getText().equals("") && !kolumnaY.getText().equals("")){
                 rysujWykres(1);
                 if(!rozmiar.getText().isEmpty()){
                     rysujWykres(2);
                 }
-            }
+            }*/
         }else{
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Błąd");
             alert.setHeaderText("Nie wypełniono wszystkich pól");
-            alert.setContentText("Aby sklasyfikować wektor  metodą k-krotnej walidacji należy podać wszystkie parametry w zakładkach Klasyfikacja kNN oraz Klasyfikacja Metodą k-krotnej walidacji!");
+            alert.setContentText("Aby sklasyfikować wektor  metodą n-krotnej walidacji należy podać wszystkie parametry w zakładkach Klasyfikacja kNN oraz Klasyfikacja Metodą n-krotnej walidacji!");
             alert.showAndWait();
         }
     }
@@ -691,9 +784,9 @@ public class Controller extends Component implements Initializable {
         for(int z = 0; z<gestoscx; z++){
             for(int i = 0; i<gestoscy; i++){
                 if(zbior){
-                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor(plaszczyzna[z][i],tmp_dane)+"O";
+                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor2(plaszczyzna[z][i],tmp_dane)+"O";
                 }else{
-                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor(plaszczyzna[z][i],dane.zbior_uczacy)+"O";
+                    plaszczyzna_klasy[z][i][plaszczyzna_klasy[z][i].length-1] = dane.klasyfikujWektor2(plaszczyzna[z][i],dane.zbior_uczacy)+"O";
                 }
             }
         }
@@ -718,6 +811,9 @@ public class Controller extends Component implements Initializable {
             int nr2 = nr;
 
             System.out.println(nr+" "+nr2);
+
+            output.appendText("....................................................................\n");
+
             output.appendText("Wspolrzedne: "+ dane.wezlytablica[nr].getXValue()+", "+dane.wezlytablica[nr].getYValue()+"\n");
             output.appendText("Numer: "+nr2+"\n");
 
@@ -726,7 +822,7 @@ public class Controller extends Component implements Initializable {
                 w[i]=dane.daneOdczytane[nr2][i];
             }
             //output.appendText("Wspolrzedne: "+w[0]+", "+w[1]+"\n");
-            dane.klasyfikujWektor(w,dane.daneOdczytane); ///
+            dane.klasyfikujWektor2(w,dane.daneOdczytane); ///
 
             int[] tab = dane.WybierzNajblizsiSasiedzi();
 
@@ -770,7 +866,7 @@ public class Controller extends Component implements Initializable {
             w[i]=dane.daneOdczytane[nr2][i];
         }
         //output.appendText("Wspolrzedne: "+w[0]+", "+w[1]+"\n");
-        dane.klasyfikujWektor(w,dane.zbior_uczacy); ///
+        dane.klasyfikujWektor2(w,dane.zbior_uczacy); ///
 
         int[] tab = dane.WybierzNajblizsiSasiedzi();
 
