@@ -30,7 +30,7 @@ public class dane {
     public static String[][][] obszary;
     public static int typ_pliku = 0;
     public static int ilosc;
-    public static double parametrP;
+    public static int parametrP;
     public static int parametrK;
     public static int rozmiar_uczacy = 0;
     public static int parametrKwalidacja;
@@ -44,9 +44,11 @@ public class dane {
     public static int[] porownanie2;
     public static boolean flaga_sasiedzi = false;
     public static boolean flaga_sasiedzi_2 = false;
+    public static boolean flaga_parametrK = false;
+    public static boolean flaga_parametrP = false;
 
 
-    public static void setParametry(double p, int k, int r){
+    public static void setParametry(int p, int k, int r){
         parametrP = p;
         parametrK = k;
         rozmiar_uczacy = r;
@@ -54,9 +56,11 @@ public class dane {
         wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
         wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-    public static void setParametry(double p, int k){
+    public static void setParametry(int p, int k){
         parametrP = p;
         parametrK = k;
+        flaga_parametrP = true;
+        flaga_parametrK = true;
         //rozmiar_uczacy = 0;
         //podzialNaZbiory();
         //wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
