@@ -368,7 +368,8 @@ public class Controller extends Component implements Initializable {
 
             //System.out.println(dane.klasyfikujWektor(wektor, dane.zbior_uczacy));
             output.appendText("Parametr K: " +Integer.parseInt(parametrK.getText()) + "\nParametr P: "+Integer.parseInt(parametrP.getText())+
-                    "\nRozmiar zbioru uczacego: " +Integer.parseInt(rozmiar));
+            "\nRozmiar zbioru uczacego: " +Integer.parseInt(rozmiar));
+
             output.appendText("\nWynik klasyfikacji kNN: "+dane.klasyfikujWektor(wektor, dane.zbior_uczacy)+"\n");
             output.appendText("Dokladnosc kNN: "+String.format("%.2f", dane.wyznaczDokladnosc(dane.zbior_uczacy))+
                     "\n....................................................................\n");
