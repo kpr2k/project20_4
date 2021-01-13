@@ -130,7 +130,7 @@ public class Controller extends Component implements Initializable {
                 dane dane = new dane();
                 sciezkaDoPlik= otworz.getSelectedFile().getPath();
                 dane.odczytajPlik(sciezkaDoPlik);
-                for(int i=0; i<dane.daneOdczytane[i].length;i++) {
+                for(int i=0; i<dane.daneOdczytane[0].length;i++) {
                     if(dane.daneOdczytane[0][i]!=null) {
                         TableColumn tmp = new TableColumn("Kolumna "+(i+1));
                         odczyt.add("Kolumna"+(i+1));
@@ -185,6 +185,7 @@ public class Controller extends Component implements Initializable {
                     alert.setContentText(toUTF8Conversion("Nie zostały podane parametry K i P"));
                     alert.showAndWait();
                 }else{
+                    if(Integer.parseInt(parametrK.getText())>dane.zbior_uczacy.length) {parametrK.setText(Integer.toString(dane.zbior_uczacy.length));}
                     dane.setParametry(Integer.parseInt(parametrP.getText()),
                             Integer.parseInt(parametrK.getText()));
                     output.appendText("Zaktualizowano parametry."+"\nParametr K: " + dane.parametrK + "\nParametr P: "+dane.parametrP+
@@ -245,7 +246,7 @@ public class Controller extends Component implements Initializable {
         }else if (event.getSource()==btnWyswietl) {
             tabelaDanych = new TabelaDanych();
 
-            tabelaDanych.piszDane(dane.daneOdczytane,columnNames, columnNamesOdleglosc, dane.zbior_testowy,dane.zbior_uczacy, dane.zbior_uczacy_odleglosci);
+            tabelaDanych.piszDane(dane.daneOdczytane,columnNames, columnNamesOdleglosc, dane.zbior_testowy,dane.zbior_uczacy, dane.zbior_danych_odleglosci);
 
         }
         aktualizacja.setDisable(false);
@@ -359,10 +360,10 @@ public class Controller extends Component implements Initializable {
             String rozmiar ="";
             if(dane.rozmiar_uczacy == 0) {
                 rozmiar = ""+(int)dane.daneOdczytane.length/2;
-                dane.setDaneZbiory((int)dane.daneOdczytane.length/2);
+                //dane.setDaneZbiory((int)dane.daneOdczytane.length/2);
             }else{
                 rozmiar = ""+dane.rozmiar_uczacy;
-                dane.setDaneZbiory(dane.rozmiar_uczacy);
+                //dane.setDaneZbiory(dane.rozmiar_uczacy);
             }
 
 
@@ -813,10 +814,11 @@ public class Controller extends Component implements Initializable {
 
             System.out.println(nr+" "+nr2);
 
-            output.appendText("....................................................................\n");
+
 
             output.appendText("Wspolrzedne: "+ dane.wezlytablica[nr].getXValue()+", "+dane.wezlytablica[nr].getYValue()+"\n");
             output.appendText("Numer: "+nr2+"\n");
+
 
             String[] w = new String[dane.daneOdczytane[nr2].length-1];
             for (int i=0;i<dane.daneOdczytane[nr2].length-1;i++){
@@ -836,6 +838,7 @@ public class Controller extends Component implements Initializable {
                     xy.getNode().setScaleY(1.6);
                 }
             }
+            output.appendText("....................................................................\n");
             dane.flaga = false;
 
             if(dane.flaga_sasiedzi_2) {
@@ -880,6 +883,7 @@ public class Controller extends Component implements Initializable {
                 xy.getNode().setScaleY(1.6);
             }
         }
+        output.appendText("....................................................................\n");
         dane.flaga = false;
 
         if(dane.flaga_sasiedzi) {
