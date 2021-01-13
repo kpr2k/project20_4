@@ -26,11 +26,12 @@ public class dane {
     public static String[][] tabL;
 
     public static String[][] zbior_uczacy_odleglosci;
+    public static String[][] zbior_danych_odleglosci;
 
     public static String[][][] obszary;
     public static int typ_pliku = 0;
     public static int ilosc;
-    public static double parametrP;
+    public static int parametrP;
     public static int parametrK;
     public static int rozmiar_uczacy = 0;
     public static int parametrKwalidacja;
@@ -44,9 +45,11 @@ public class dane {
     public static int[] porownanie2;
     public static boolean flaga_sasiedzi = false;
     public static boolean flaga_sasiedzi_2 = false;
+    public static boolean flaga_parametrK = false;
+    public static boolean flaga_parametrP = false;
 
 
-    public static void setParametry(double p, int k, int r){
+    public static void setParametry(int p, int k, int r){
         parametrP = p;
         parametrK = k;
         rozmiar_uczacy = r;
@@ -54,9 +57,11 @@ public class dane {
         wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
         wezlytablicaTest = new Wezel[zbior_testowy.length];
     }
-    public static void setParametry(double p, int k){
+    public static void setParametry(int p, int k){
         parametrP = p;
         parametrK = k;
+        flaga_parametrP = true;
+        flaga_parametrK = true;
         //rozmiar_uczacy = 0;
         //podzialNaZbiory();
         //wezlytablicaUczacy = new Wezel[zbior_uczacy.length];
@@ -96,6 +101,9 @@ public class dane {
         } catch (IOException ex) {
             System.out.println("Brak pliku!");
         }
+        zbior_uczacy_odleglosci=null;
+        zbior_danych_odleglosci=null;
+        rozmiar_uczacy = 0;
 
         // Tablica dla odczytanych danych
         daneOdczytane = new String[odczyt.size()][];
@@ -150,6 +158,21 @@ public class dane {
             System.out.print(w[i]+", ");
         }
         zbior_uczacy_odleglosci = new String[zbiorUczacy.length][(zbiorUczacy[0].length)+1];
+        zbior_danych_odleglosci = new String[daneOdczytane.length][(daneOdczytane[0].length)+1];;
+        for (int i = 0; i < daneOdczytane.length; i++) { // zewnętrzena pętla po zbiorze danych
+            tmp = 0;
+            for (int j = 0; j < daneOdczytane[i].length; j++) { // wewnętrzna pętla po zbiore danych
+                zbior_danych_odleglosci[i][j] = daneOdczytane[i][j];
+                if (NumberUtils.isParsable(daneOdczytane[i][j]) && j < daneOdczytane[i].length - 1) {
+                    tmp += pow(abs((Double.parseDouble(daneOdczytane[i][j])) - Double.parseDouble(w[j])), p);
+                }
+                if (daneOdczytane[i][j] instanceof String || j == daneOdczytane[i].length - 1) {
+                    klasa = daneOdczytane[i][j];
+                }
+            }
+            tmp = pow(tmp, iloraz);
+            zbior_danych_odleglosci[i][daneOdczytane[0].length] = Double.toString(tmp);
+        }
         for (int i = 0; i < zbiorUczacy.length; i++) { // zewnętrzena pętla po zbiorze uczących
             tmp = 0;
             for (int j = 0; j < zbiorUczacy[i].length; j++) { // wewnętrzna pętla po zbiore uczących
@@ -339,6 +362,8 @@ public class dane {
     }
 
     public static double klasyfikujWalidacja(String[] w) {
+        String[][] zbior_uczacy_tmp=null;
+        String[][] zbior_testowy_tmp=null;
         int kWalidacja = parametrKwalidacja;
         int from = 0;
         int to  = daneOdczytane.length/kWalidacja;
@@ -369,39 +394,39 @@ public class dane {
         // Podział danych na zbiory
         for(int k = 0; k < kWalidacja; k++) {
             System.out.println("\n-----------------------Walidacja k = "+k+"-----------------------");
-            zbior_uczacy = new String[wymieszaneDane.length-(wymieszaneDane.length/kWalidacja)][wymieszaneDane[0].length];
-            zbior_testowy = new String[to-from][wymieszaneDane[0].length];
+            zbior_uczacy_tmp = new String[wymieszaneDane.length-(wymieszaneDane.length/kWalidacja)][wymieszaneDane[0].length];
+            zbior_testowy_tmp = new String[to-from][wymieszaneDane[0].length];
 
             int indeksUczacych = 0;
             int indeksTestujacych = 0;
             for (int i = 0; i < wymieszaneDane.length; i++ ) {
                 if(!(i>=from && i<to)) {
-                    zbior_uczacy[indeksUczacych]=wymieszaneDane[i];
+                    zbior_uczacy_tmp[indeksUczacych]=wymieszaneDane[i];
                     indeksUczacych++;
                 }
                 else {
-                    zbior_testowy[indeksTestujacych]=wymieszaneDane[i];
+                    zbior_testowy_tmp[indeksTestujacych]=wymieszaneDane[i];
                     indeksTestujacych++;
                 }
             }
             System.out.println("Zbiór uczących");
-            for(int i = 0; i < zbior_uczacy.length; i++) {
+            for(int i = 0; i < zbior_uczacy_tmp.length; i++) {
                 System.out.print("id_"+i+" ");
-                for(int j = 0; j < zbior_uczacy[i].length; j++) {
-                    System.out.print(zbior_uczacy[i][j]+" ");
+                for(int j = 0; j < zbior_uczacy_tmp[i].length; j++) {
+                    System.out.print(zbior_uczacy_tmp[i][j]+" ");
                 }
                 System.out.print("\n");
             }
             System.out.println("\nZbiór testujących");
-            for(int i = 0; i < zbior_testowy.length; i++) {
+            for(int i = 0; i < zbior_testowy_tmp.length; i++) {
                 System.out.print("id_"+i+" ");
-                for(int j = 0; j < zbior_testowy[i].length; j++) {
-                    System.out.print(zbior_testowy[i][j]+" ");
+                for(int j = 0; j < zbior_testowy_tmp[i].length; j++) {
+                    System.out.print(zbior_testowy_tmp[i][j]+" ");
                 }
                 System.out.print("\n");
             }
             System.out.print("\n");
-            dokladnosc = wyznaczDokladnosc(zbior_uczacy);
+            dokladnosc = wyznaczDokladnosc(zbior_uczacy_tmp);
             wyniki[k]=dokladnosc;
 
             from = to;
